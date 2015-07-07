@@ -11,16 +11,24 @@ import static org.mockito.Mockito.verify;
 public class WizardTreeTest {
 	private Page firstPage;
 	private Page secondPage;
+	private Page thirdPage;
+	private Page fourthPage;
+	private Page fifthPage;
+	private Page sixthPage;
 	private BranchPage branchPage;
 	private WizardTree wizardTree;
 
 	@Before
 	public void setUp() throws Exception {
-		firstPage = new TestPage("Title");
-		secondPage = new TestPage("Title");
-		branchPage = new TestBranchPage("Title",
-				new Branch(secondPage),
-				new Branch(new TestPage("Title")));
+		firstPage = new TestPage("First Page");
+		secondPage = new TestPage("Second Page");
+		thirdPage = new TestPage("Third Page");
+		fourthPage = new TestPage("Fourth Page");
+		fifthPage = new TestPage("Fifth Page");
+		sixthPage = new TestPage("Sixth Page");
+		branchPage = new TestBranchPage("First Branch Page",
+				new Branch("First Branch", secondPage),
+				new Branch("Second Branch", thirdPage));
 		wizardTree = new WizardTree(firstPage, branchPage);
 	}
 
@@ -152,5 +160,51 @@ public class WizardTreeTest {
 		wizardTree.setListener(wizardTreeListener);
 		branchPage.chooseBranch(0);
 		verify(wizardTreeListener, times(1)).onTreeChanged(2);
+	}
+
+	@Test
+	public void givenWizardTreeWithMultipleBranchPages_whenChooseBranch_thenCallOnTreeChangedCallback()
+			throws Exception {
+		WizardTreeListener wizardTreeListener = mock(WizardTreeListener.class);
+		BranchPage branchPage2 = new TestBranchPage("Title",
+				new Branch(fifthPage, sixthPage),
+				new Branch(fifthPage, sixthPage));
+		BranchPage branchPage1 = new TestBranchPage("Title",
+				new Branch(thirdPage, fourthPage, branchPage2),
+				new Branch(thirdPage, fourthPage));
+		WizardTree wizardTree = new WizardTree(firstPage, secondPage, branchPage1);
+		wizardTree.setListener(wizardTreeListener);
+		branchPage1.chooseBranch(0);
+		branchPage2.chooseBranch(0);
+		verify(wizardTreeListener, times(1)).onTreeChanged(3);
+		verify(wizardTreeListener, times(1)).onTreeChanged(6);
+	}
+
+	@Test
+	public void givenWizardTree_whenPageFinished_thenCallOnPageFinishedCallback() throws Exception {
+		WizardTreePageFinishedListener wizardTreePageFinishedListener = mock(WizardTreePageFinishedListener.class);
+		wizardTree.setWizardTreePageFinishedListener(wizardTreePageFinishedListener);
+		firstPage.finish();
+		verify(wizardTreePageFinishedListener, times(1)).onPageFinished(firstPage, 0);
+	}
+
+	@Test
+	public void givenWizardTreeWithFinishedBranchPage_whenPageFinishedAfterBranchPage_thenCallOnPageFinishedCallback()
+			throws Exception {
+		WizardTreePageFinishedListener wizardTreePageFinishedListener = mock(WizardTreePageFinishedListener.class);
+		BranchPage branchPage = new TestBranchPage("First Branch Page",
+				new Branch(thirdPage, fourthPage),
+				new Branch(thirdPage, fourthPage));
+		WizardTree wizardTree = new WizardTree(firstPage, secondPage, branchPage);
+		wizardTree.setWizardTreePageFinishedListener(wizardTreePageFinishedListener);
+		branchPage.chooseBranch(0);
+		thirdPage.finish();
+		verify(wizardTreePageFinishedListener, times(1)).onPageFinished(thirdPage, 3);
+	}
+
+	@Test
+	public void givenWizardTreeWithoutOutListener_whenFinishPage_thenDontCallOnPageFinishedCallback()
+			throws Exception {
+		firstPage.finish();
 	}
 }

@@ -1,6 +1,11 @@
 <resources>
-	<string name="app_name">WizardPager</string>
+	<string name="app_name">Place Order</string>
 
-	<!-- TODO: Remove or change this placeholder text -->
-	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="title_activity_main">Place Order</string>
+
+	<string name="activity_main_back">Previous</string>
+	<string name="activity_main_next">Next</string>
+	<string name="activity_main_order_type_title">Order Type</string>
+	<string name="activity_main_order_type_sandwich">Sandwich</string>
+	<string name="activity_main_order_type_salad">Salad</string>
 </resources>

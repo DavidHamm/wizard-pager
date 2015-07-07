@@ -30,9 +30,14 @@ public class BranchTest {
 		new Branch("Name", firstPage);
 	}
 
-	@Test(expected = Branch.EmptyBranchException.class)
-	public void createEmptyBranch_shouldThrowEmptyBranchException() throws Exception {
+	@Test
+	public void createEmptyBranch() throws Exception {
 		new Branch();
+	}
+
+	@Test
+	public void createEmptyBranchWithName() throws Exception {
+		new Branch("Name");
 	}
 
 	@Test(expected = Branch.BranchPageBeforeLastPageException.class)
@@ -62,6 +67,12 @@ public class BranchTest {
 	@Test
 	public void getBranchPageFromBranchWithoutBranchPage_shouldReturnNull() throws Exception {
 		Branch branch = new Branch(firstPage, secondPage);
+		assertNull(branch.getBranchPage());
+	}
+
+	@Test
+	public void givenEmptyBranch_whenGetBranchPage_then_returnNull() throws Exception {
+		Branch branch = new Branch("Branch");
 		assertNull(branch.getBranchPage());
 	}
 }
