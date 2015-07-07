@@ -8,4 +8,13 @@
 	<string name="activity_main_order_type_title">Order Type</string>
 	<string name="activity_main_order_type_sandwich">Sandwich</string>
 	<string name="activity_main_order_type_salad">Salad</string>
+	<string name="activity_main_bread_title">Bread</string>
+	<string name="activity_main_bread_white">White</string>
+	<string name="activity_main_bread_wheat">Wheat</string>
+	<string name="activity_main_bread_rye">Rye</string>
+	<string name="activity_main_bread_pretzel">Pretzel</string>
+	<string name="activity_main_bread_ciabatta">Ciabatta</string>
+	<string name="activity_main_salad_type_title">Salad type</string>
+	<string name="activity_main_salad_type_greek">Greek</string>
+	<string name="activity_main_salad_type_caesar">Caesar</string>
 </resources>

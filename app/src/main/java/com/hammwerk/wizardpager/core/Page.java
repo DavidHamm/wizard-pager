@@ -6,6 +6,7 @@ public abstract class Page {
 	private final String title;
 	private Fragment fragment;
 	private PageListener listener;
+	private boolean finished;
 
 	public Page(String title) {
 		this.title = title;
@@ -25,6 +26,7 @@ public abstract class Page {
 	}
 
 	public void finish() {
+		finished = true;
 		if (listener != null) {
 			listener.onPageFinished(this);
 		}
@@ -32,5 +34,9 @@ public abstract class Page {
 
 	public void setPageListener(PageListener listener) {
 		this.listener = listener;
+	}
+
+	public boolean isFinished() {
+		return finished;
 	}
 }
