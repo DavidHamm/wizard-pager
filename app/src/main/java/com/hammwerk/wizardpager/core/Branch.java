@@ -12,9 +12,6 @@ public class Branch {
 	}
 
 	public Branch(String name, Page... pages) {
-		if (pages.length == 0) {
-			throw new EmptyBranchException();
-		}
 		for (int i = 0; i < pages.length - 1; i++) {
 			if (pages[i] instanceof BranchPage) {
 				throw new BranchPageBeforeLastPageException();
@@ -33,9 +30,11 @@ public class Branch {
 	}
 
 	public BranchPage getBranchPage() {
-		Page page = pages.get(pages.size() - 1);
-		if (page instanceof BranchPage) {
-			return (BranchPage) page;
+		if (!pages.isEmpty()) {
+			Page page = pages.get(pages.size() - 1);
+			if (page instanceof BranchPage) {
+				return (BranchPage) page;
+			}
 		}
 		return null;
 	}
@@ -44,7 +43,8 @@ public class Branch {
 		return pages;
 	}
 
-	public class EmptyBranchException extends RuntimeException {
+	public String getName() {
+		return name;
 	}
 
 	public class BranchPageBeforeLastPageException extends RuntimeException {

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class BranchPage extends Page {
-	private final List<Branch> branches;
+	protected final List<Branch> branches;
 	private Branch choosenBranch;
-	private BranchPageListener listener;
+	private BranchPageListener branchPageListener;
 
 	public BranchPage(String title, Branch... branches) {
 		super(title);
@@ -19,9 +19,10 @@ public abstract class BranchPage extends Page {
 	public void chooseBranch(int index) {
 		if (!branches.get(index).equals(choosenBranch)) {
 			choosenBranch = branches.get(index);
-			if (listener != null) {
-				listener.onBranchChoosen(this);
+			if (branchPageListener != null) {
+				branchPageListener.onBranchChoosen(this);
 			}
+			finish();
 		}
 	}
 
@@ -29,8 +30,16 @@ public abstract class BranchPage extends Page {
 		return choosenBranch;
 	}
 
-	public void setListener(BranchPageListener listener) {
-		this.listener = listener;
+	public String[] getChoices() {
+		String[] choices = new String[branches.size()];
+		for (int i = 0; i < branches.size(); i++) {
+			choices[i] = branches.get(i).getName();
+		}
+		return choices;
+	}
+
+	public void setBranchPageListener(BranchPageListener listener) {
+		this.branchPageListener = listener;
 	}
 
 	public class LessThenTwoBranchesException extends RuntimeException {

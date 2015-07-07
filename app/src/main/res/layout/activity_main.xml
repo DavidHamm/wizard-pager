@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.hammwerk.wizardpager.MainActivity">
+
+	<android.support.v4.view.ViewPager
+		android:id="@+id/activity_main_view_pager"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_above="@+id/activity_main_button_bar_divider" />
+
+	<View
+		android:id="@+id/activity_main_button_bar_divider"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@+id/activity_main_button_bar"
+		android:background="?android:attr/dividerVertical" />
+
+	<LinearLayout
+		android:id="@+id/activity_main_button_bar"
+		style="?android:attr/buttonBarStyle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true">
+
+		<Button
+			android:id="@+id/activity_main_back_button"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:onClick="onBackClick"
+			android:text="@string/activity_main_back"
+			android:visibility="invisible" />
+
+		<Button
+			android:id="@+id/activity_main_next_button"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:enabled="false"
+			android:onClick="onNextClick"
+			android:text="@string/activity_main_next" />
+	</LinearLayout>
+</RelativeLayout>
