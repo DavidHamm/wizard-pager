@@ -22,7 +22,8 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public int getItemPosition(Object object) {
-		if (wizardTree.getPositionOfPageFragment((Fragment) object) < lastChangedPageIndex) {
+		int positionOfPageFragment = wizardTree.getPositionOfPageFragment((Fragment) object);
+		if (positionOfPageFragment != -1 && positionOfPageFragment < lastChangedPageIndex) {
 			return POSITION_UNCHANGED;
 		}
 		return POSITION_NONE;
@@ -31,11 +32,15 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 	@Override
 	public Fragment getItem(int position) {
 		Page page = wizardTree.getPage(position);
-		return page.createFragment();
+		return page.getFragment();
 	}
 
 	@Override
 	public int getCount() {
 		return wizardTree.getKnownNumberOfPages();
+	}
+
+	public boolean isPageFinished(int position) {
+		return wizardTree.getPage(position).isFinished();
 	}
 }

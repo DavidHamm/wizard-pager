@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,5 +28,11 @@ public class PageTest {
 		page.setPageListener(pageListener);
 		page.finish();
 		verify(pageListener, times(1)).onPageFinished(page);
+	}
+
+	@Test
+	public void givenPage_whenFinished_thenPageIsFinished() throws Exception {
+		page.finish();
+		assertTrue(page.isFinished());
 	}
 }
