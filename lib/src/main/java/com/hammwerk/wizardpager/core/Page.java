@@ -4,19 +4,23 @@ import android.support.v4.app.Fragment;
 
 public abstract class Page {
 	private final String title;
+	private final boolean required;
 	private Fragment fragment;
 	private PageListener listener;
-	private boolean finished;
+	private boolean completed;
 
 	public Page(String title) {
+		this(title, false);
+	}
+
+	public Page(String title, boolean required) {
 		this.title = title;
+		this.required = required;
 	}
 
 	public String getTitle() {
 		return title;
 	}
-
-	protected abstract Fragment createFragment();
 
 	public Fragment getFragment() {
 		if (fragment == null) {
@@ -25,18 +29,27 @@ public abstract class Page {
 		return fragment;
 	}
 
-	public void finish() {
-		finished = true;
-		if (listener != null) {
-			listener.onPageFinished(this);
+	public void setCompleted() {
+		completed = true;
+		if (listener != null && required) {
+			listener.onPageValid(this);
 		}
+	}
+
+	public void setNotCompleted() {
+		completed = false;
+		if (listener != null && required) {
+			listener.onPageInvalid(this);
+		}
+	}
+
+	public boolean isValid() {
+		return !required | completed;
 	}
 
 	public void setPageListener(PageListener listener) {
 		this.listener = listener;
 	}
 
-	public boolean isFinished() {
-		return finished;
-	}
+	protected abstract Fragment createFragment();
 }

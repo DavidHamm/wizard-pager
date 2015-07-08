@@ -1,5 +1,7 @@
 package com.hammwerk.wizardpager.core;
 
 public interface PageListener {
-	void onPageFinished(Page page);
+	void onPageValid(Page page);
+
+	void onPageInvalid(Page page);
 }

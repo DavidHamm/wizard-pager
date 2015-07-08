@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	style="@style/WizardPageContainer"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context="com.hammwerk.wizardpager.MultiFixedChoicePageFragment">
+
+	<TextView
+		style="@style/WizardPageTitle"
+		tools:text="Title"/>
+
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:choiceMode="multipleChoice"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:saveEnabled="false"
+		android:scrollbarStyle="outsideOverlay"
+		tools:listitem="@android:layout/simple_list_item_multiple_choice"/>
+
+</LinearLayout>

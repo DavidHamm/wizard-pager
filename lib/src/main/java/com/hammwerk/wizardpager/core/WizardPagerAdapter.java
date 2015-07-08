@@ -10,8 +10,11 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 
 	public WizardPagerAdapter(FragmentManager fm, WizardTree wizardTree) {
 		super(fm);
+		if (wizardTree == null) {
+			throw new WizardTreeIsNullException();
+		}
 		this.wizardTree = wizardTree;
-		wizardTree.setListener(new WizardTreeListener() {
+		this.wizardTree.setWizardTreeListener(new WizardTreeListener() {
 			@Override
 			public void onTreeChanged(int pageIndex) {
 				lastChangedPageIndex = pageIndex;
@@ -41,6 +44,9 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 	}
 
 	public boolean isPageFinished(int position) {
-		return wizardTree.getPage(position).isFinished();
+		return wizardTree.getPage(position).isValid();
+	}
+
+	public static class WizardTreeIsNullException extends RuntimeException {
 	}
 }

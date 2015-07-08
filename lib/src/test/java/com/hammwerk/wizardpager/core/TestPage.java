@@ -7,6 +7,10 @@ public class TestPage extends Page {
 		super(title);
 	}
 
+	public TestPage(String title, boolean required) {
+		super(title, required);
+	}
+
 	@Override
 	protected Fragment createFragment() {
 		return new Fragment();
