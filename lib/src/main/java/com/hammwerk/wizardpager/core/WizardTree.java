@@ -6,7 +6,7 @@ public class WizardTree {
 	private final Branch trunk;
 	private final PageListener pageListener;
 	private WizardTreeListener listener;
-	private WizardTreePageFinishedListener outListener;
+	private PageValidityListener pageValidityListener;
 
 	public WizardTree(Page... pages) {
 		this.trunk = new Branch(pages);
@@ -21,23 +21,23 @@ public class WizardTree {
 		}
 	}
 
-	public void setListener(WizardTreeListener listener) {
+	public void setWizardTreeListener(WizardTreeListener listener) {
 		this.listener = listener;
 	}
 
-	public void setWizardTreePageFinishedListener(WizardTreePageFinishedListener outListener) {
-		this.outListener = outListener;
+	public void setPageValidityListener(PageValidityListener pageValidityListener) {
+		this.pageValidityListener = pageValidityListener;
 	}
 
 	protected Page getPage(int position) {
 		int positionInBranch = position;
 		Branch branch = trunk;
 		while (positionInBranch >= branch.getNumberOfPages()) {
-			if (branch.getBranchPage() == null || branch.getBranchPage().getChoosenBranch() == null) {
+			if (branch.getBranchPage() == null || branch.getBranchPage().getSelectedBranch() == null) {
 				throw new PageIndexOutOfBoundsException();
 			}
 			positionInBranch -= branch.getNumberOfPages();
-			branch = branch.getBranchPage().getChoosenBranch();
+			branch = branch.getBranchPage().getSelectedBranch();
 		}
 		return branch.getPage(positionInBranch);
 	}
@@ -52,7 +52,7 @@ public class WizardTree {
 				}
 				position++;
 			}
-		} while (branch.getBranchPage() != null && (branch = branch.getBranchPage().getChoosenBranch()) != null);
+		} while (branch.getBranchPage() != null && (branch = branch.getBranchPage().getSelectedBranch()) != null);
 		return -1;
 	}
 
@@ -66,15 +66,15 @@ public class WizardTree {
 				}
 				position++;
 			}
-		} while (branch.getBranchPage() != null && (branch = branch.getBranchPage().getChoosenBranch()) != null);
+		} while (branch.getBranchPage() != null && (branch = branch.getBranchPage().getSelectedBranch()) != null);
 		return -1;
 	}
 
 	protected int getKnownNumberOfPages() {
 		int numberOfPages = trunk.getNumberOfPages();
 		Branch branch = trunk;
-		while (branch.getBranchPage() != null && branch.getBranchPage().getChoosenBranch() != null) {
-			branch = branch.getBranchPage().getChoosenBranch();
+		while (branch.getBranchPage() != null && branch.getBranchPage().getSelectedBranch() != null) {
+			branch = branch.getBranchPage().getSelectedBranch();
 			numberOfPages += branch.getNumberOfPages();
 		}
 		return numberOfPages;
@@ -86,7 +86,7 @@ public class WizardTree {
 	private class MyBranchPageListener implements BranchPageListener {
 		@Override
 		public void onBranchChoosen(BranchPage branchPage) {
-			Branch choosenBranch = branchPage.getChoosenBranch();
+			Branch choosenBranch = branchPage.getSelectedBranch();
 			for (Page i : choosenBranch.getPages()) {
 				i.setPageListener(pageListener);
 			}
@@ -102,9 +102,16 @@ public class WizardTree {
 
 	private class MyPageListener implements PageListener {
 		@Override
-		public void onPageFinished(Page page) {
-			if (outListener != null) {
-				outListener.onPageFinished(page, getPositionOfPage(page));
+		public void onPageValid(Page page) {
+			if (pageValidityListener != null) {
+				pageValidityListener.onPageValid(page, getPositionOfPage(page));
+			}
+		}
+
+		@Override
+		public void onPageInvalid(Page page) {
+			if (pageValidityListener != null) {
+				pageValidityListener.onPageInvalid(page, getPositionOfPage(page));
 			}
 		}
 	}

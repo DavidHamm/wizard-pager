@@ -5,29 +5,29 @@ import java.util.List;
 
 public abstract class BranchPage extends Page {
 	protected final List<Branch> branches;
-	private Branch choosenBranch;
+	private Branch selectedBranch;
 	private BranchPageListener branchPageListener;
 
 	public BranchPage(String title, Branch... branches) {
-		super(title);
+		super(title, true);
 		if (branches.length < 2) {
 			throw new LessThenTwoBranchesException();
 		}
 		this.branches = Arrays.asList(branches);
 	}
 
-	public void chooseBranch(int index) {
-		if (!branches.get(index).equals(choosenBranch)) {
-			choosenBranch = branches.get(index);
+	public void selectBranch(int index) {
+		if (!branches.get(index).equals(selectedBranch)) {
+			selectedBranch = branches.get(index);
 			if (branchPageListener != null) {
 				branchPageListener.onBranchChoosen(this);
 			}
-			finish();
+			setCompleted();
 		}
 	}
 
-	public Branch getChoosenBranch() {
-		return choosenBranch;
+	public Branch getSelectedBranch() {
+		return selectedBranch;
 	}
 
 	public String[] getChoices() {

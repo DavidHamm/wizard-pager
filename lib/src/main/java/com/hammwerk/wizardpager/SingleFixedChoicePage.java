@@ -8,7 +8,11 @@ public class SingleFixedChoicePage extends Page {
 	private final String[] choices;
 
 	public SingleFixedChoicePage(String title, String... choices) {
-		super(title);
+		this(title, true, choices);
+	}
+
+	public SingleFixedChoicePage(String title, boolean required, String... choices) {
+		super(title, required);
 		this.choices = choices;
 	}
 
