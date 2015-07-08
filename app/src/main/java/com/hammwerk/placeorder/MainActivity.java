@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.hammwerk.wizardpager.IntegerPage;
 import com.hammwerk.wizardpager.MultiFixedChoicePage;
 import com.hammwerk.wizardpager.SingleFixedChoiceBranchPage;
 import com.hammwerk.wizardpager.SingleFixedChoicePage;
@@ -26,7 +27,42 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		WizardTree wizardTree = new WizardTree(
+		WizardTree wizardTree = createWizardTree();
+		wizardTree.setPageValidityListener(new MyPageValidityListener());
+
+		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
+		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
+		viewPager.setAdapter(adapter);
+		viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				backButton.setVisibility(position > 0 ? View.VISIBLE : View.INVISIBLE);
+				nextButton.setEnabled(adapter.isPageFinished(position));
+			}
+		});
+
+		nextButton = (Button) findViewById(R.id.activity_main_next_button);
+		backButton = (Button) findViewById(R.id.activity_main_back_button);
+	}
+
+	public void onBackClick(View view) {
+		viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+		nextButton.setEnabled(true);
+		if (viewPager.getCurrentItem() == 0) {
+			backButton.setVisibility(View.INVISIBLE);
+		}
+	}
+
+	public void onNextClick(View view) {
+		if (viewPager.getCurrentItem() < adapter.getCount() - 1) {
+			viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+			nextButton.setEnabled(adapter.isPageFinished(viewPager.getCurrentItem()));
+			backButton.setVisibility(View.VISIBLE);
+		}
+	}
+
+	private WizardTree createWizardTree() {
+		return new WizardTree(
 				new SingleFixedChoiceBranchPage(getString(R.string.activity_main_order_type_title),
 						new Branch(getString(R.string.activity_main_order_type_sandwich),
 								new SingleFixedChoicePage(getString(R.string.activity_main_bread_title),
@@ -60,11 +96,8 @@ public class MainActivity extends AppCompatActivity {
 										getString(R.string.activity_main_cheeses_bleu)),
 								new SingleFixedChoiceBranchPage(getString(R.string.activity_main_toasted_title),
 										new Branch(getString(R.string.activity_main_toasted_yes),
-												new SingleFixedChoicePage(
-														getString(R.string.activity_main_toast_time_title),
-														getString(R.string.activity_main_toast_time_30_seconds),
-														getString(R.string.activity_main_toast_time_1_minute),
-														getString(R.string.activity_main_toast_time_2_minutes))),
+												new IntegerPage(getString(R.string.activity_main_toast_time_title),
+														getString(R.string.activity_main_toast_time_minutes))),
 										new Branch(getString(R.string.activity_main_toasted_no)))),
 						new Branch(getString(R.string.activity_main_order_type_salad),
 								new SingleFixedChoicePage(getString(R.string.activity_main_salad_type_title),
@@ -76,51 +109,21 @@ public class MainActivity extends AppCompatActivity {
 										getString(R.string.activity_main_dressing_oil_and_vinegar),
 										getString(R.string.activity_main_dressing_thousand_island),
 										getString(R.string.activity_main_dressing_italian)))));
-
-		wizardTree.setPageValidityListener(new PageValidityListener() {
-			@Override
-			public void onPageValid(Page page, int pageIndex) {
-				if (viewPager.getCurrentItem() == pageIndex) {
-					nextButton.setEnabled(true);
-				}
-			}
-
-			@Override
-			public void onPageInvalid(Page page, int pageIndex) {
-				if (viewPager.getCurrentItem() == pageIndex) {
-					nextButton.setEnabled(false);
-				}
-			}
-		});
-
-		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
-		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
-		viewPager.setAdapter(adapter);
-		viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-			@Override
-			public void onPageSelected(int position) {
-				backButton.setVisibility(position > 0 ? View.VISIBLE : View.INVISIBLE);
-				nextButton.setEnabled(adapter.isPageFinished(position));
-			}
-		});
-
-		nextButton = (Button) findViewById(R.id.activity_main_next_button);
-		backButton = (Button) findViewById(R.id.activity_main_back_button);
 	}
 
-	public void onBackClick(View view) {
-		viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-		nextButton.setEnabled(true);
-		if (viewPager.getCurrentItem() == 0) {
-			backButton.setVisibility(View.INVISIBLE);
+	private class MyPageValidityListener implements PageValidityListener {
+		@Override
+		public void onPageValid(Page page, int pageIndex) {
+			if (viewPager.getCurrentItem() == pageIndex) {
+				nextButton.setEnabled(true);
+			}
 		}
-	}
 
-	public void onNextClick(View view) {
-		if (viewPager.getCurrentItem() < adapter.getCount() - 1) {
-			viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-			nextButton.setEnabled(adapter.isPageFinished(viewPager.getCurrentItem()));
-			backButton.setVisibility(View.VISIBLE);
+		@Override
+		public void onPageInvalid(Page page, int pageIndex) {
+			if (viewPager.getCurrentItem() == pageIndex) {
+				nextButton.setEnabled(false);
+			}
 		}
 	}
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	style="@style/WizardPageContainer"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	tools:context="com.hammwerk.wizardpager.SingleFixedChoicePageFragment">
+
+	<TextView
+		style="@style/WizardPageTitle"
+		tools:text="Title"/>
+
+	<EditText
+		android:id="@+id/fragment_integer_page_edit_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_below="@android:id/title"
+		android:layout_marginLeft="16dp"
+		android:layout_marginStart="16dp"
+		android:layout_marginTop="32dp"
+		android:layout_toLeftOf="@+id/fragment_integer_page_unit_text_view"
+		android:layout_toStartOf="@+id/fragment_integer_page_unit_text_view"
+		android:inputType="number"/>
+
+	<TextView
+		android:id="@+id/fragment_integer_page_unit_text_view"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBaseline="@+id/fragment_integer_page_edit_text"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentRight="true"
+		android:layout_marginEnd="16dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="16dp"
+		android:layout_marginStart="8dp"
+		android:ellipsize="end"
+		android:maxEms="20"
+		android:maxLines="1"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		tools:text="unit"/>
+
+</RelativeLayout>
