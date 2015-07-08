@@ -1,11 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
 	compileSdkVersion 22
 	buildToolsVersion "22.0.1"
 
 	defaultConfig {
-		applicationId "com.hammwerk.placeorder"
 		minSdkVersion 15
 		targetSdkVersion 22
 		versionCode 1
@@ -20,7 +19,9 @@ android {
 }
 
 dependencies {
-	compile project(":lib")
 	compile fileTree(dir: 'libs', include: ['*.jar'])
 	compile 'com.android.support:appcompat-v7:22.2.0'
+
+	testCompile 'junit:junit:4.12'
+	testCompile "org.mockito:mockito-core:1.9.5"
 }

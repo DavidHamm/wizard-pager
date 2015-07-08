@@ -1,4 +1,4 @@
-package com.hammwerk.wizardpager;
+package com.hammwerk.placeorder;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.hammwerk.wizardpager.SingleFixedChoiceBranchPage;
+import com.hammwerk.wizardpager.SingleFixedChoicePage;
 import com.hammwerk.wizardpager.core.Branch;
 import com.hammwerk.wizardpager.core.Page;
 import com.hammwerk.wizardpager.core.WizardPagerAdapter;
