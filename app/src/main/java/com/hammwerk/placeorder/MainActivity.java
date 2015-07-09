@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onPageSelected(int position) {
 				backButton.setVisibility(position > 0 ? View.VISIBLE : View.INVISIBLE);
-				nextButton.setEnabled(adapter.isPageFinished(position));
+				nextButton.setEnabled(adapter.isPageValid(position));
 			}
 		});
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 	public void onNextClick(View view) {
 		if (viewPager.getCurrentItem() < adapter.getCount() - 1) {
 			viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-			nextButton.setEnabled(adapter.isPageFinished(viewPager.getCurrentItem()));
+			nextButton.setEnabled(adapter.isPageValid(viewPager.getCurrentItem()));
 			backButton.setVisibility(View.VISIBLE);
 		}
 	}

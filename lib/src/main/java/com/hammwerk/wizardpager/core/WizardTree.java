@@ -70,7 +70,7 @@ public class WizardTree {
 		return -1;
 	}
 
-	protected int getKnownNumberOfPages() {
+	protected int getNumberOfAccessablePages() {
 		int numberOfPages = trunk.getNumberOfPages();
 		Branch branch = trunk;
 		while (branch.getBranchPage() != null && branch.getBranchPage().getSelectedBranch() != null) {

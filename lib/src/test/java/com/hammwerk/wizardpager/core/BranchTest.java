@@ -2,10 +2,14 @@ package com.hammwerk.wizardpager.core;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
+@RunWith(HierarchicalContextRunner.class)
 public class BranchTest {
 	private BranchPage branchPage;
 	private Page firstPage;
@@ -41,38 +45,59 @@ public class BranchTest {
 	}
 
 	@Test(expected = Branch.BranchPageBeforeLastPageException.class)
-	public void createBranchWithBranchPageBeforeLastPage_shouldThrowBranchPageBeforeLastPageException()
-			throws Exception {
+	public void createBranchWithPageAfterBranchPage_shouldThrowBranchPageBeforeLastPageException() throws Exception {
 		new Branch(branchPage, firstPage);
 	}
 
-	@Test
-	public void getFirstPage_shouldReturnFirstPage() throws Exception {
-		Branch branch = new Branch(firstPage, secondPage);
-		assertEquals(firstPage, branch.getPage(0));
+	public class GivenEmptyBranch {
+		private Branch branch;
+
+		@Before
+		public void setUp() throws Exception {
+			branch = new Branch();
+		}
+
+		@Test
+		public void givenEmptyBranch_whenGetBranchPage_thenReturnNull() throws Exception {
+			assertNull(branch.getBranchPage());
+		}
 	}
 
-	@Test
-	public void getNumberOfPagesFromBranchWithThreePages_shouldReturnThree() throws Exception {
-		Branch branch = new Branch(firstPage, secondPage, branchPage);
-		assertEquals(3, branch.getNumberOfPages());
+	public class GivenBranchWithTowPages {
+		private Branch branch;
+
+		@Before
+		public void setUp() throws Exception {
+			branch = new Branch(firstPage, secondPage);
+		}
+
+		@Test
+		public void whenGetFirstPage_thenReturnFirstPage() throws Exception {
+			assertEquals(firstPage, branch.getPage(0));
+		}
+
+		@Test
+		public void whenGetBranchPage_thenReturnNull() throws Exception {
+			assertNull(branch.getBranchPage());
+		}
 	}
 
-	@Test
-	public void getBranchPage_shouldReturnBranchPage() throws Exception {
-		Branch branch = new Branch(firstPage, secondPage, branchPage);
-		assertEquals(branchPage, branch.getBranchPage());
-	}
+	public class GivenBranchWithTwoPagesAndBranchPage {
+		private Branch branch;
 
-	@Test
-	public void getBranchPageFromBranchWithoutBranchPage_shouldReturnNull() throws Exception {
-		Branch branch = new Branch(firstPage, secondPage);
-		assertNull(branch.getBranchPage());
-	}
+		@Before
+		public void setUp() throws Exception {
+			branch = new Branch(firstPage, secondPage, branchPage);
+		}
 
-	@Test
-	public void givenEmptyBranch_whenGetBranchPage_then_returnNull() throws Exception {
-		Branch branch = new Branch("Branch");
-		assertNull(branch.getBranchPage());
+		@Test
+		public void whenGetNumberOfPages_thenReturnNumberOfPages() throws Exception {
+			assertEquals(3, branch.getNumberOfPages());
+		}
+
+		@Test
+		public void whenGetBranchPage_thenReturnBranchPage() throws Exception {
+			assertEquals(branchPage, branch.getBranchPage());
+		}
 	}
 }
