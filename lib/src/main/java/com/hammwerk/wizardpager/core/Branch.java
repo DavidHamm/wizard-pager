@@ -14,7 +14,7 @@ public class Branch {
 	public Branch(String name, Page... pages) {
 		for (int i = 0; i < pages.length - 1; i++) {
 			if (pages[i] instanceof BranchPage) {
-				throw new BranchPageBeforeLastPageException();
+				throw new PageAfterBranchPageException();
 			}
 		}
 		this.pages = Arrays.asList(pages);
@@ -26,6 +26,15 @@ public class Branch {
 	}
 
 	public int getNumberOfPages() {
+		return pages.size();
+	}
+
+	public int getNumberOfValidPages() {
+		for (int i = 0; i < pages.size(); i++) {
+			if (!pages.get(i).isValid()) {
+				return i;
+			}
+		}
 		return pages.size();
 	}
 
@@ -47,6 +56,6 @@ public class Branch {
 		return name;
 	}
 
-	public class BranchPageBeforeLastPageException extends RuntimeException {
+	public class PageAfterBranchPageException extends RuntimeException {
 	}
 }
