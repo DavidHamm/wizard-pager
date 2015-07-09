@@ -2,12 +2,13 @@ package com.hammwerk.wizardpager.core;
 
 import android.support.v4.app.Fragment;
 
-public abstract class Page {
+public abstract class Page<T> {
 	private final String title;
 	private final boolean required;
 	private Fragment fragment;
 	private PageListener listener;
 	private boolean completed;
+	private T result;
 
 	public Page(String title) {
 		this(title, false);
@@ -49,6 +50,14 @@ public abstract class Page {
 
 	public void setPageListener(PageListener listener) {
 		this.listener = listener;
+	}
+
+	public final T getResult() {
+		return result;
+	}
+
+	public final void setResult(T result) {
+		this.result = result;
 	}
 
 	protected abstract Fragment createFragment();

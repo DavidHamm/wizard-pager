@@ -27,7 +27,7 @@ public class BranchPageTest {
 		new TestBranchPage("Branch Page", new Branch("Branch", new TestPage("Page")));
 	}
 
-	public class GivenABranchPage {
+	public class GivenABranchPageWithTwoBranches {
 		private BranchPage branchPage;
 		private Branch firstBranch;
 
@@ -67,6 +67,11 @@ public class BranchPageTest {
 			@Test
 			public void whenAskForValidity_thenReturnTrue() throws Exception {
 				assertTrue(branchPage.isValid());
+			}
+
+			@Test
+			public void whenGetResult_thenReturnSelectedBranchIndex() throws Exception {
+				assertEquals(Integer.valueOf(0), branchPage.getResult());
 			}
 		}
 

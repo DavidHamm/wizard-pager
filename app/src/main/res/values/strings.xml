@@ -6,6 +6,7 @@
 
 	<string name="activity_main_back">Previous</string>
 	<string name="activity_main_next">Next</string>
+	<string name="activity_main_review_order">Review Order</string>
 	<string name="activity_main_order_type_title">Order Type</string>
 	<string name="activity_main_order_type_sandwich">Sandwich</string>
 	<string name="activity_main_order_type_salad">Salad</string>
@@ -52,4 +53,8 @@
 	<string name="activity_main_toasted_no">No</string>
 	<string name="activity_main_toast_time_title">Toast time</string>
 	<string name="activity_main_toast_time_minutes">minutes</string>
+
+	<string name="title_activity_result">ResultActivity</string>
+	<string name="activity_result_back">Back</string>
+	<string name="activity_result_submit_order">Submit Order</string>
 </resources>

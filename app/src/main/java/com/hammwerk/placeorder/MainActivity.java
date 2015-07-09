@@ -1,5 +1,6 @@
 package com.hammwerk.placeorder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,30 +17,27 @@ import com.hammwerk.wizardpager.core.PageValidityListener;
 import com.hammwerk.wizardpager.core.WizardPagerAdapter;
 import com.hammwerk.wizardpager.core.WizardTree;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 	private WizardPagerAdapter adapter;
 	private ViewPager viewPager;
 	private Button nextButton;
 	private Button backButton;
+	private WizardTree wizardTree;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		WizardTree wizardTree = createWizardTree();
+		wizardTree = createWizardTree();
 		wizardTree.setPageValidityListener(new MyPageValidityListener());
 
 		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
 		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
 		viewPager.setAdapter(adapter);
-		viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-			@Override
-			public void onPageSelected(int position) {
-				backButton.setVisibility(position > 0 ? View.VISIBLE : View.INVISIBLE);
-				nextButton.setEnabled(adapter.isPageValid(position));
-			}
-		});
+		viewPager.addOnPageChangeListener(new MySimpleOnPageChangeListener());
 
 		nextButton = (Button) findViewById(R.id.activity_main_next_button);
 		backButton = (Button) findViewById(R.id.activity_main_back_button);
@@ -47,17 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
 	public void onBackClick(View view) {
 		viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
-		nextButton.setEnabled(true);
-		if (viewPager.getCurrentItem() == 0) {
-			backButton.setVisibility(View.INVISIBLE);
-		}
 	}
 
 	public void onNextClick(View view) {
 		if (viewPager.getCurrentItem() < adapter.getCount() - 1) {
 			viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
-			nextButton.setEnabled(adapter.isPageValid(viewPager.getCurrentItem()));
-			backButton.setVisibility(View.VISIBLE);
+		} else {
+			startActivity(createResultIntent());
 		}
 	}
 
@@ -108,7 +102,68 @@ public class MainActivity extends AppCompatActivity {
 										getString(R.string.activity_main_dressing_balsamic),
 										getString(R.string.activity_main_dressing_oil_and_vinegar),
 										getString(R.string.activity_main_dressing_thousand_island),
-										getString(R.string.activity_main_dressing_italian)))));
+										getString(R.string.activity_main_dressing_italian))))) {
+
+		};
+	}
+
+	private Intent createResultIntent() {
+		Intent resultIntent = new Intent(this, ResultActivity.class);
+		addResultExtras(resultIntent);
+		return resultIntent;
+	}
+
+	private void addResultExtras(Intent resultIntent) {
+		addOrderTypeExtra(resultIntent);
+		if (isSandwichSelected()) {
+			addSandwichExtras(resultIntent);
+		} else {
+			addSaladExtras(resultIntent);
+		}
+	}
+
+	private void addOrderTypeExtra(Intent resultIntent) {
+		Integer orderType = wizardTree.<SingleFixedChoiceBranchPage>getPage(0).getResult();
+		resultIntent.putExtra(ResultActivity.EXTRA_ORDER_TYPE, orderType);
+	}
+
+	private boolean isSandwichSelected() {
+		return wizardTree.<SingleFixedChoiceBranchPage>getPage(0).getResult() == 0;
+	}
+
+	private void addSandwichExtras(Intent resultIntent) {
+		Integer bread = wizardTree.<SingleFixedChoicePage>getPage(1).getResult();
+		List<Integer> meats = wizardTree.<MultiFixedChoicePage>getPage(2).getResult();
+		List<Integer> veggies = wizardTree.<MultiFixedChoicePage>getPage(3).getResult();
+		List<Integer> cheeses = wizardTree.<MultiFixedChoicePage>getPage(4).getResult();
+		Integer toasted = wizardTree.<SingleFixedChoiceBranchPage>getPage(5).getResult();
+		resultIntent
+				.putExtra(ResultActivity.EXTRA_BREAD, bread)
+				.putExtra(ResultActivity.EXTRA_MEATS, meats.toArray(new Integer[meats.size()]))
+				.putExtra(ResultActivity.EXTRA_VEGGIES, veggies.toArray(new Integer[veggies.size()]))
+				.putExtra(ResultActivity.EXTRA_CHEESES, cheeses.toArray(new Integer[cheeses.size()]))
+				.putExtra(ResultActivity.EXTRA_TOASTED, toasted);
+
+		if (isToastedSelected()) {
+			addToastTimeExtra(resultIntent);
+		}
+	}
+
+	private void addSaladExtras(Intent resultIntent) {
+		Integer saladType = wizardTree.<SingleFixedChoicePage>getPage(1).getResult();
+		Integer dressing = wizardTree.<SingleFixedChoicePage>getPage(2).getResult();
+		resultIntent
+				.putExtra(ResultActivity.EXTRA_SALAT_TYPE, saladType)
+				.putExtra(ResultActivity.EXTRA_DRESSING, dressing);
+	}
+
+	private boolean isToastedSelected() {
+		return wizardTree.<SingleFixedChoiceBranchPage>getPage(5).getResult() == 0;
+	}
+
+	private void addToastTimeExtra(Intent resultIntent) {
+		Integer toastTimeInMinutes = wizardTree.<IntegerPage>getPage(6).getResult();
+		resultIntent.putExtra(ResultActivity.EXTRA_TOAST_TIME, toastTimeInMinutes);
 	}
 
 	private class MyPageValidityListener implements PageValidityListener {
@@ -124,6 +179,17 @@ public class MainActivity extends AppCompatActivity {
 			if (viewPager.getCurrentItem() == pageIndex) {
 				nextButton.setEnabled(false);
 			}
+		}
+	}
+
+	private class MySimpleOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+		@Override
+		public void onPageSelected(int position) {
+			backButton.setVisibility(position > 0 ? View.VISIBLE : View.INVISIBLE);
+			nextButton.setEnabled(adapter.isPageValid(position));
+			nextButton.setText(wizardTree.isLastPage(wizardTree.getPage(position)) ?
+					getString(R.string.activity_main_review_order) :
+					getString(R.string.activity_main_next));
 		}
 	}
 }

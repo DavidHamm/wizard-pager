@@ -3,7 +3,7 @@ package com.hammwerk.wizardpager.core;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class BranchPage extends Page {
+public abstract class BranchPage extends Page<Integer> {
 	protected final List<Branch> branches;
 	private Branch selectedBranch;
 	private BranchPageListener branchPageListener;
@@ -19,6 +19,7 @@ public abstract class BranchPage extends Page {
 	public void selectBranch(int index) {
 		if (!branches.get(index).equals(selectedBranch)) {
 			selectedBranch = branches.get(index);
+			setResult(index);
 			if (branchPageListener != null) {
 				branchPageListener.onBranchChoosen(this);
 			}

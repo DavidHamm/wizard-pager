@@ -21,8 +21,9 @@ public class Branch {
 		this.name = name;
 	}
 
-	public Page getPage(int position) {
-		return pages.get(position);
+	@SuppressWarnings("unchecked")
+	public <T extends Page> T getPage(int position) {
+		return (T) pages.get(position);
 	}
 
 	public int getNumberOfPages() {
