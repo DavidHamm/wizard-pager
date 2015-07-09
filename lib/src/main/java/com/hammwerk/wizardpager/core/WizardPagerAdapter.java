@@ -40,10 +40,10 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public int getCount() {
-		return wizardTree.getKnownNumberOfPages();
+		return wizardTree.getNumberOfAccessablePages();
 	}
 
-	public boolean isPageFinished(int position) {
+	public boolean isPageValid(int position) {
 		return wizardTree.getPage(position).isValid();
 	}
 
