@@ -71,13 +71,23 @@ public class WizardTree {
 	}
 
 	protected int getNumberOfAccessablePages() {
-		int numberOfPages = trunk.getNumberOfPages();
+		int numberOfValidPages = 0;
 		Branch branch = trunk;
-		while (branch.getBranchPage() != null && branch.getBranchPage().getSelectedBranch() != null) {
-			branch = branch.getBranchPage().getSelectedBranch();
-			numberOfPages += branch.getNumberOfPages();
+		while (branch != null) {
+			int numberOfValidPagesInBranch = branch.getNumberOfValidPages();
+			numberOfValidPages += numberOfValidPagesInBranch +
+					(numberOfValidPagesInBranch < branch.getNumberOfPages() ? 1 : 0);
+			branch = getNextBranch(branch);
 		}
-		return numberOfPages;
+		return numberOfValidPages;
+	}
+
+	private Branch getNextBranch(Branch branch) {
+		BranchPage branchPage = branch.getBranchPage();
+		if (branchPage != null) {
+			return branchPage.getSelectedBranch();
+		}
+		return null;
 	}
 
 	public static class PageIndexOutOfBoundsException extends RuntimeException {
@@ -94,15 +104,15 @@ public class WizardTree {
 			if (nextBranchPage != null) {
 				nextBranchPage.setBranchPageListener(this);
 			}
-			if (listener != null) {
-				listener.onTreeChanged(getPositionOfPage(branchPage) + 1);
-			}
 		}
 	}
 
 	private class MyPageListener implements PageListener {
 		@Override
 		public void onPageValid(Page page) {
+			if (listener != null) {
+				listener.onTreeChanged(getPositionOfPage(page) + 1);
+			}
 			if (pageValidityListener != null) {
 				pageValidityListener.onPageValid(page, getPositionOfPage(page));
 			}

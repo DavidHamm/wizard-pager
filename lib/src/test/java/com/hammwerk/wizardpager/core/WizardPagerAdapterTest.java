@@ -28,7 +28,11 @@ public class WizardPagerAdapterTest {
 		@Before
 		public void setUp() throws Exception {
 			requiredPage = new TestPage("Page", true);
-			wizardPagerAdapter = new WizardPagerAdapter(null, new WizardTree(requiredPage));
+			wizardPagerAdapter = new WizardPagerAdapter(null, new WizardTree(requiredPage)) {
+				@Override
+				public void notifyDataSetChanged() {
+				}
+			};
 		}
 
 		@Test
@@ -37,12 +41,12 @@ public class WizardPagerAdapterTest {
 		}
 
 		@Test
-		public void givenWizardPagerAdapterWithOnePage_whenGetItem_thenReturnFragmentOfPage() throws Exception {
+		public void whenGetItem_thenReturnFragmentOfPage() throws Exception {
 			assertEquals(requiredPage.getFragment(), wizardPagerAdapter.getItem(0));
 		}
 
 		@Test
-		public void givenWizardPagerAdapterWithOnePage_whenGetItemPosition_thenReturnPositionNone() throws Exception {
+		public void whenGetItemPosition_thenReturnPositionNone() throws Exception {
 			assertEquals(WizardPagerAdapter.POSITION_NONE,
 					wizardPagerAdapter.getItemPosition(requiredPage.getFragment()));
 		}
@@ -79,6 +83,11 @@ public class WizardPagerAdapterTest {
 			};
 		}
 
+		@Test
+		public void whenGetCount_thenReturnTwo() throws Exception {
+			assertEquals(2, wizardPagerAdapter.getCount());
+		}
+
 		public class GivenASelectedBranch {
 			@Before
 			public void setUp() throws Exception {
@@ -91,6 +100,11 @@ public class WizardPagerAdapterTest {
 						wizardPagerAdapter.getItemPosition(pageInTrunkBranch.getFragment()));
 				assertEquals(WizardPagerAdapter.POSITION_UNCHANGED,
 						wizardPagerAdapter.getItemPosition(branchPageInTrunkBranch.getFragment()));
+			}
+
+			@Test
+			public void whenGetCount_thenReturn() throws Exception {
+				assertEquals(3, wizardPagerAdapter.getCount());
 			}
 		}
 	}
