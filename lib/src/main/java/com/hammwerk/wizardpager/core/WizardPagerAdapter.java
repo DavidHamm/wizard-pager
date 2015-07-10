@@ -14,7 +14,7 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 			throw new WizardTreeIsNullException();
 		}
 		this.wizardTree = wizardTree;
-		this.wizardTree.setWizardTreeListener(new WizardTreeListener() {
+		this.wizardTree.addWizardTreeChangeListener(new WizardTreeChangeListener() {
 			@Override
 			public void onTreeChanged(int pageIndex) {
 				lastChangedPageIndex = pageIndex;

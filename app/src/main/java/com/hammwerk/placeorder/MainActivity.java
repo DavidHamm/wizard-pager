@@ -16,6 +16,7 @@ import com.hammwerk.wizardpager.core.Page;
 import com.hammwerk.wizardpager.core.PageValidityListener;
 import com.hammwerk.wizardpager.core.WizardPagerAdapter;
 import com.hammwerk.wizardpager.core.WizardTree;
+import com.hammwerk.wizardpager.core.WizardTreeChangeListener;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
 		wizardTree = createWizardTree();
 		wizardTree.setPageValidityListener(new MyPageValidityListener());
+		wizardTree.addWizardTreeChangeListener(new MyWizardTreeChangeListener());
 
 		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
 		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
@@ -179,6 +181,15 @@ public class MainActivity extends AppCompatActivity {
 			if (viewPager.getCurrentItem() == pageIndex) {
 				nextButton.setEnabled(false);
 			}
+		}
+	}
+
+	private class MyWizardTreeChangeListener implements WizardTreeChangeListener {
+		@Override
+		public void onTreeChanged(int pageIndex) {
+			nextButton.setText(wizardTree.isLastPage(wizardTree.getPage(viewPager.getCurrentItem())) ?
+					getString(R.string.activity_main_review_order) :
+					getString(R.string.activity_main_next));
 		}
 	}
 
