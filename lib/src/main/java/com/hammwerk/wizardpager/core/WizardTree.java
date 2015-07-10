@@ -2,10 +2,13 @@ package com.hammwerk.wizardpager.core;
 
 import android.support.v4.app.Fragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WizardTree {
 	private final Branch trunk;
 	private final PageListener pageListener;
-	private WizardTreeListener listener;
+	private final List<WizardTreeChangeListener> wizardTreeChangeListener = new ArrayList<>();
 	private PageValidityListener pageValidityListener;
 
 	public WizardTree(Page... pages) {
@@ -21,8 +24,8 @@ public class WizardTree {
 		}
 	}
 
-	public void setWizardTreeListener(WizardTreeListener listener) {
-		this.listener = listener;
+	public void addWizardTreeChangeListener(WizardTreeChangeListener listener) {
+		this.wizardTreeChangeListener.add(listener);
 	}
 
 	public void setPageValidityListener(PageValidityListener pageValidityListener) {
@@ -128,8 +131,8 @@ public class WizardTree {
 	private class MyPageListener implements PageListener {
 		@Override
 		public void onPageValid(Page page) {
-			if (listener != null) {
-				listener.onTreeChanged(getPositionOfPage(page) + 1);
+			for (WizardTreeChangeListener i : wizardTreeChangeListener) {
+				i.onTreeChanged(getPositionOfPage(page) + 1);
 			}
 			if (pageValidityListener != null) {
 				pageValidityListener.onPageValid(page, getPositionOfPage(page));

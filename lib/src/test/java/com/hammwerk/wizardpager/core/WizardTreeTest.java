@@ -314,13 +314,13 @@ public class WizardTreeTest {
 			}
 		}
 
-		public class GivenAWizardTreeListener {
-			private WizardTreeListener wizardTreeListener;
+		public class GivenAWizardTreeChangeListener {
+			private WizardTreeChangeListener wizardTreeChangeListener;
 
 			@Before
 			public void setUp() throws Exception {
-				wizardTreeListener = mock(WizardTreeListener.class);
-				wizardTree.setWizardTreeListener(wizardTreeListener);
+				wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				wizardTree.addWizardTreeChangeListener(wizardTreeChangeListener);
 			}
 
 			public class GivenSelectedBranches {
@@ -332,8 +332,37 @@ public class WizardTreeTest {
 
 				@Test
 				public void whenSelectBranches_thenCallOnTreeChangedCallback() throws Exception {
-					verify(wizardTreeListener, times(1)).onTreeChanged(2);
-					verify(wizardTreeListener, times(1)).onTreeChanged(4);
+					verify(wizardTreeChangeListener, times(1)).onTreeChanged(2);
+					verify(wizardTreeChangeListener, times(1)).onTreeChanged(4);
+				}
+			}
+		}
+
+		public class GivenTwoWizardTreeChangeListener {
+			private WizardTreeChangeListener firstWizardTreeChangeListener;
+			private WizardTreeChangeListener secondWizardTreeChangeListener;
+
+			@Before
+			public void setUp() throws Exception {
+				firstWizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				secondWizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				wizardTree.addWizardTreeChangeListener(firstWizardTreeChangeListener);
+				wizardTree.addWizardTreeChangeListener(secondWizardTreeChangeListener);
+			}
+
+			public class GivenSelectedBranches {
+				@Before
+				public void setUp() throws Exception {
+					branchPageInTrunkBranch.selectBranch(0);
+					branchPageInFirstBranch.selectBranch(0);
+				}
+
+				@Test
+				public void whenSelectBranches_thenCallOnTreeChangedCallback() throws Exception {
+					verify(firstWizardTreeChangeListener, times(1)).onTreeChanged(2);
+					verify(firstWizardTreeChangeListener, times(1)).onTreeChanged(4);
+					verify(secondWizardTreeChangeListener, times(1)).onTreeChanged(2);
+					verify(secondWizardTreeChangeListener, times(1)).onTreeChanged(4);
 				}
 			}
 		}
@@ -417,13 +446,13 @@ public class WizardTreeTest {
 			}
 		}
 
-		public class GivenAWizardTreeListener {
-			private WizardTreeListener wizardTreeListener;
+		public class GivenAWizardTreeChangeListener {
+			private WizardTreeChangeListener wizardTreeChangeListener;
 
 			@Before
 			public void setUp() throws Exception {
-				wizardTreeListener = mock(WizardTreeListener.class);
-				wizardTree.setWizardTreeListener(wizardTreeListener);
+				wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				wizardTree.addWizardTreeChangeListener(wizardTreeChangeListener);
 			}
 
 			public class GivenCompletedPageBranches {
@@ -434,7 +463,7 @@ public class WizardTreeTest {
 
 				@Test
 				public void whenPageCompleted_thenCallOnTreeChangedCallback() throws Exception {
-					verify(wizardTreeListener, times(1)).onTreeChanged(1);
+					verify(wizardTreeChangeListener, times(1)).onTreeChanged(1);
 				}
 			}
 		}

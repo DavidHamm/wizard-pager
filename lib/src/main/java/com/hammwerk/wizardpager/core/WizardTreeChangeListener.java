@@ -1,5 +1,5 @@
 package com.hammwerk.wizardpager.core;
 
-public interface WizardTreeListener {
+public interface WizardTreeChangeListener {
 	void onTreeChanged(int pageIndex);
 }
