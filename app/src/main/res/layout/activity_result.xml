@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:tools="http://schemas.android.com/tools"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				tools:context="com.hammwerk.placeorder.ResultActivity">
+
+	<ListView
+		android:id="@android:id/list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/activity_result_button_bar_divider"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:scrollbarStyle="outsideOverlay"
+		tools:listitem="@layout/list_item_result"/>
+
+	<View
+		android:id="@+id/activity_result_button_bar_divider"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_above="@+id/activity_result_button_bar"
+		android:background="?android:attr/dividerVertical"/>
+
+	<LinearLayout
+		android:id="@+id/activity_result_button_bar"
+		style="?android:attr/buttonBarStyle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true">
+
+		<Button
+			android:id="@+id/activity_result_back_button"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:onClick="onBackClick"
+			android:text="@string/activity_result_back"/>
+
+		<Button
+			android:id="@+id/activity_result_submit_result_button"
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:onClick="onSubmitOrderClick"
+			android:text="@string/activity_result_submit_order"/>
+	</LinearLayout>
+</RelativeLayout>

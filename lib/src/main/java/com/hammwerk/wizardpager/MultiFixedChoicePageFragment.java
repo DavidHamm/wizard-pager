@@ -2,6 +2,7 @@ package com.hammwerk.wizardpager;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,14 @@ import android.widget.TextView;
 
 import com.hammwerk.wizardpager.core.Page;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiFixedChoicePageFragment extends ListFragment {
 	private static final String KEY_CHOICES = "com.hammwerk.wizardpager.key.CHOICES";
-	private Page page;
+	private Page<List<Integer>> page;
 
-	public static MultiFixedChoicePageFragment createInstance(Page page, String[] choices) {
+	public static MultiFixedChoicePageFragment createInstance(Page<List<Integer>> page, String[] choices) {
 		Bundle args = new Bundle();
 		args.putStringArray(KEY_CHOICES, choices);
 		MultiFixedChoicePageFragment fragment = new MultiFixedChoicePageFragment();
@@ -47,9 +51,30 @@ public class MultiFixedChoicePageFragment extends ListFragment {
 		} else {
 			page.setNotCompleted();
 		}
+		page.setResult(getCheckedPositionsList(l.getCheckedItemPositions()));
 	}
 
-	public void setPage(Page page) {
+	private List<Integer> getCheckedPositionsList(SparseBooleanArray checkedItemPositions) {
+		if (checkedItemPositions != null) {
+			List<Integer> checkedPositions = getCheckedPositions(checkedItemPositions);
+			if (!checkedPositions.isEmpty()) {
+				return checkedPositions;
+			}
+		}
+		return null;
+	}
+
+	private List<Integer> getCheckedPositions(SparseBooleanArray checkedItemPositions) {
+		List<Integer> checkedPositions = new ArrayList<>();
+		for (int i = 0; i < checkedItemPositions.size(); i++) {
+			if (checkedItemPositions.valueAt(i)) {
+				checkedPositions.add(i);
+			}
+		}
+		return checkedPositions;
+	}
+
+	public void setPage(Page<List<Integer>> page) {
 		this.page = page;
 	}
 }

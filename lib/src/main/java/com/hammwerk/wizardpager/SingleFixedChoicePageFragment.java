@@ -13,9 +13,9 @@ import com.hammwerk.wizardpager.core.Page;
 
 public class SingleFixedChoicePageFragment extends ListFragment {
 	private static final String KEY_CHOICES = "com.hammwerk.wizardpager.key.CHOICES";
-	private Page page;
+	private Page<Integer> page;
 
-	public static SingleFixedChoicePageFragment createInstance(Page page, String[] choices) {
+	public static SingleFixedChoicePageFragment createInstance(Page<Integer> page, String[] choices) {
 		Bundle args = new Bundle();
 		args.putStringArray(KEY_CHOICES, choices);
 		SingleFixedChoicePageFragment fragment = new SingleFixedChoicePageFragment();
@@ -42,10 +42,11 @@ public class SingleFixedChoicePageFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
+		page.setResult(position);
 		page.setCompleted();
 	}
 
-	public void setPage(Page page) {
+	public void setPage(Page<Integer> page) {
 		this.page = page;
 	}
 }

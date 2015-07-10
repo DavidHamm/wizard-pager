@@ -19,7 +19,7 @@ public class PageTest {
 		private Page page;
 
 		@Before
-		public void givenAPage() throws Exception {
+		public void setUp() throws Exception {
 			page = new TestPage("Page");
 		}
 
@@ -37,7 +37,7 @@ public class PageTest {
 			private PageListener pageListener;
 
 			@Before
-			public void givenAPageListener() throws Exception {
+			public void setUp() throws Exception {
 				pageListener = mock(PageListener.class);
 				page.setPageListener(pageListener);
 			}
@@ -60,7 +60,7 @@ public class PageTest {
 		private TestPage requiredPage;
 
 		@Before
-		public void givenRequiredPage() throws Exception {
+		public void setUp() throws Exception {
 			requiredPage = new TestPage("Required Page", true);
 		}
 
@@ -86,7 +86,7 @@ public class PageTest {
 			private PageListener pageListener;
 
 			@Before
-			public void givenAPageListener() throws Exception {
+			public void setUp() throws Exception {
 				pageListener = mock(PageListener.class);
 				requiredPage.setPageListener(pageListener);
 			}

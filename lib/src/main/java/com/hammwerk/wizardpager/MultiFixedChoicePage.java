@@ -4,7 +4,9 @@ import android.support.v4.app.Fragment;
 
 import com.hammwerk.wizardpager.core.Page;
 
-public class MultiFixedChoicePage extends Page {
+import java.util.List;
+
+public class MultiFixedChoicePage extends Page<List<Integer>> {
 	private final String[] choices;
 
 	public MultiFixedChoicePage(String title, String... choices) {

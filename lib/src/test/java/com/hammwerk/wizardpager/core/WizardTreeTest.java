@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,6 +45,16 @@ public class WizardTreeTest {
 		@Test
 		public void whenGetPositionOfInvalidPageFragment_thenReturnMinusOne() throws Exception {
 			assertEquals(-1, wizardTree.getPositionOfPageFragment(new Fragment()));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithPage_thenReturnTrue() throws Exception {
+			assertTrue(wizardTree.isLastPage(page));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithInvalidPage_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(new TestPage("Invalid Page")));
 		}
 
 		public class GivenAPageValidityListener {
@@ -95,22 +107,44 @@ public class WizardTreeTest {
 		public void whenGetPositionOfBranchPageFragment_thenReturnPositionOfBranchPage() throws Exception {
 			assertEquals(1, wizardTree.getPositionOfPageFragment(branchPageInTrunkBranch.getFragment()));
 		}
+
+		@Test
+		public void whenCallIsLastPageWithFirstPage_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(pageInTrunkBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithBranchPage_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(branchPageInTrunkBranch));
+		}
+
+		public class GivenASelectedBranch {
+			@Before
+			public void setUp() throws Exception {
+				branchPageInTrunkBranch.selectBranch(0);
+			}
+
+			@Test
+			public void whenCallIsLastPageWithBranchPage_thenReturnTrue() throws Exception {
+				assertTrue(wizardTree.isLastPage(branchPageInTrunkBranch));
+			}
+		}
 	}
 
 	public class GivenAWizardTreeWithTrunkAndTwoBranches {
 		private WizardTree wizardTree;
-		private TestBranchPage branchPage;
-		private TestPage pageInFirstBranch;
 		private TestPage pageInTrunkBranch;
+		private TestBranchPage branchPageInTrunkBranch;
+		private TestPage pageInFirstBranch;
 
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
 			pageInFirstBranch = new TestPage("Page in First Branch");
-			branchPage = new TestBranchPage("Branch Page",
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch",
 					new Branch("First Branch", pageInFirstBranch),
 					new Branch("Second Branch", new TestPage("Page in Second Branch")));
-			wizardTree = new WizardTree(pageInTrunkBranch, branchPage);
+			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
 		}
 
 		@Test(expected = WizardTree.PageIndexOutOfBoundsException.class)
@@ -133,10 +167,25 @@ public class WizardTreeTest {
 			assertEquals(-1, wizardTree.getPositionOfPageFragment(pageInFirstBranch.getFragment()));
 		}
 
+		@Test
+		public void whenCallIsLastPageWithFirstPage_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(pageInTrunkBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithBranchPage_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(branchPageInTrunkBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithPageInFirstBranch_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(pageInFirstBranch));
+		}
+
 		public class GivenASelectedBranch {
 			@Before
 			public void setUp() throws Exception {
-				branchPage.selectBranch(0);
+				branchPageInTrunkBranch.selectBranch(0);
 			}
 
 			@Test
@@ -164,6 +213,21 @@ public class WizardTreeTest {
 				assertEquals(2, wizardTree.getPositionOfPageFragment(pageInFirstBranch.getFragment()));
 			}
 
+			@Test
+			public void whenCallIsLastPageWithPageInTrunkBranch_thenReturnFalse() throws Exception {
+				assertFalse(wizardTree.isLastPage(pageInTrunkBranch));
+			}
+
+			@Test
+			public void whenCallIsLastPageWithBranchPage_thenReturnFalse() throws Exception {
+				assertFalse(wizardTree.isLastPage(branchPageInTrunkBranch));
+			}
+
+			@Test
+			public void whenCallIsLastPageWithPageInFirstBranch_thenReturnTrue() throws Exception {
+				assertTrue(wizardTree.isLastPage(pageInFirstBranch));
+			}
+
 			public class GivenAPageValidityListener {
 				private PageValidityListener pageValidityListener;
 
@@ -184,7 +248,7 @@ public class WizardTreeTest {
 
 	public class GivenAWizardTreeWithTrunkAndTwoBranchesAndTwoBranches {
 		private WizardTree wizardTree;
-		private TestBranchPage branchPageInTrunk;
+		private TestBranchPage branchPageInTrunkBranch;
 		private TestPage pageInFirstBranch;
 		private TestBranchPage branchPageInFirstBranch;
 		private TestPage pageInTrunkBranch;
@@ -192,14 +256,62 @@ public class WizardTreeTest {
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
-			pageInFirstBranch = new TestPage("Page in First Branch");
-			branchPageInFirstBranch = new TestBranchPage("Branch Page in First Branch",
-					new Branch("First Branch in First Branch"),
-					new Branch("Second Branch in First Branch"));
-			branchPageInTrunk = new TestBranchPage("Branch Page in Trunk Branch",
+			pageInFirstBranch = new TestPage("Page in first Branch");
+			branchPageInFirstBranch = new TestBranchPage("Branch Page in first Branch",
+					new Branch("First Branch in first Branch"),
+					new Branch("Second Branch in first Branch"));
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch",
 					new Branch("First Branch", pageInFirstBranch, branchPageInFirstBranch),
-					new Branch("Second Branch", new TestPage("Page in Second Branch")));
-			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunk);
+					new Branch("Second Branch"));
+			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
+		}
+
+		@Test
+		public void whenCallIsLastPageWithPageInTrunkBranch_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(pageInTrunkBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithBranchPageInTrunkBranch_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(branchPageInTrunkBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithPageInFirstBranch_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(pageInFirstBranch));
+		}
+
+		@Test
+		public void whenCallIsLastPageWithBranchPageInFirstBranch_thenReturnFalse() throws Exception {
+			assertFalse(wizardTree.isLastPage(branchPageInFirstBranch));
+		}
+
+		public class GivenSelectedBranches {
+			@Before
+			public void setUp() throws Exception {
+				branchPageInTrunkBranch.selectBranch(0);
+				branchPageInFirstBranch.selectBranch(0);
+			}
+
+			@Test
+			public void whenCallIsLastPageWithPageInTrunkBranch_thenReturnFalse() throws Exception {
+				assertFalse(wizardTree.isLastPage(pageInTrunkBranch));
+			}
+
+			@Test
+			public void whenCallIsLastPageWithBranchPageInTrunkBranch_thenReturnFalse() throws Exception {
+				assertFalse(wizardTree.isLastPage(branchPageInTrunkBranch));
+			}
+
+			@Test
+			public void whenCallIsLastPageWithPageInFirstBranch_thenReturnFalse() throws Exception {
+				assertFalse(wizardTree.isLastPage(pageInFirstBranch));
+			}
+
+			@Test
+			public void whenCallIsLastPageWithBranchPageInFirstBranch_thenReturnTrue() throws Exception {
+				assertTrue(wizardTree.isLastPage(branchPageInFirstBranch));
+			}
 		}
 
 		public class GivenAWizardTreeListener {
@@ -214,7 +326,7 @@ public class WizardTreeTest {
 			public class GivenSelectedBranches {
 				@Before
 				public void setUp() throws Exception {
-					branchPageInTrunk.selectBranch(0);
+					branchPageInTrunkBranch.selectBranch(0);
 					branchPageInFirstBranch.selectBranch(0);
 				}
 

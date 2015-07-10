@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 
 import com.hammwerk.wizardpager.core.Page;
 
-public class IntegerPage extends Page {
+public class IntegerPage extends Page<Integer> {
 	private final String unit;
 
 	public IntegerPage(String title, String unit) {

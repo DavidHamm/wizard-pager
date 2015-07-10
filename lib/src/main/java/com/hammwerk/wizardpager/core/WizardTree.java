@@ -29,7 +29,7 @@ public class WizardTree {
 		this.pageValidityListener = pageValidityListener;
 	}
 
-	protected Page getPage(int position) {
+	public <T extends Page> T getPage(int position) {
 		int positionInBranch = position;
 		Branch branch = trunk;
 		while (positionInBranch >= branch.getNumberOfPages()) {
@@ -88,6 +88,24 @@ public class WizardTree {
 			return branchPage.getSelectedBranch();
 		}
 		return null;
+	}
+
+	public boolean isLastPage(Page page) {
+		int positionOfPage = getPositionOfPage(page);
+		if (positionOfPage == -1) {
+			return false;
+		}
+		Branch branch = trunk;
+		while (branch != null) {
+			BranchPage branchPage = branch.getBranchPage();
+			if (branchPage == null ||
+					(branchPage.getSelectedBranch() != null &&
+							branchPage.getSelectedBranch().getNumberOfPages() == 0)) {
+				return branch.getPage(branch.getPages().size() - 1).equals(page);
+			}
+			branch = getNextBranch(branch);
+		}
+		return false;
 	}
 
 	public static class PageIndexOutOfBoundsException extends RuntimeException {

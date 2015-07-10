@@ -15,9 +15,9 @@ import com.hammwerk.wizardpager.core.Page;
 
 public class IntegerPageFragment extends Fragment {
 	private static final String KEY_UNIT = "com.hammwerk.wizardpager.key.UNIT";
-	private Page page;
+	private Page<Integer> page;
 
-	public static IntegerPageFragment createInstance(Page page, String unit) {
+	public static IntegerPageFragment createInstance(Page<Integer> page, String unit) {
 		Bundle args = new Bundle();
 		args.putString(KEY_UNIT, unit);
 		IntegerPageFragment fragment = new IntegerPageFragment();
@@ -46,7 +46,7 @@ public class IntegerPageFragment extends Fragment {
 				.addTextChangedListener(new CompletedTextWatcher());
 	}
 
-	public void setPage(Page page) {
+	public void setPage(Page<Integer> page) {
 		this.page = page;
 	}
 
@@ -63,8 +63,10 @@ public class IntegerPageFragment extends Fragment {
 		public void afterTextChanged(Editable s) {
 			if (TextUtils.isEmpty(s)) {
 				page.setNotCompleted();
+				page.setResult(null);
 			} else {
 				page.setCompleted();
+				page.setResult(Integer.parseInt(s.toString()));
 			}
 		}
 	}

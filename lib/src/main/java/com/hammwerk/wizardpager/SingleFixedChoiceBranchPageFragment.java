@@ -43,6 +43,7 @@ public class SingleFixedChoiceBranchPageFragment extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		branchPage.selectBranch(position);
+		branchPage.setResult(position);
 	}
 
 	public void setBranchPage(BranchPage branchPage) {

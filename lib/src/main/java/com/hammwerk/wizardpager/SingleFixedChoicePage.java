@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 
 import com.hammwerk.wizardpager.core.Page;
 
-public class SingleFixedChoicePage extends Page {
+public class SingleFixedChoicePage extends Page<Integer> {
 	private final String[] choices;
 
 	public SingleFixedChoicePage(String title, String... choices) {
