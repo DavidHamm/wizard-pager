@@ -137,7 +137,8 @@ public class ResultActivity extends AppCompatActivity {
 			return new ResultAdapter.ResultItem(getString(R.string.activity_main_veggies_title),
 					TextUtils.join(", ", getVeggiesStrings(veggies)));
 		}
-		return new ResultAdapter.ResultItem(getString(R.string.activity_main_veggies_title), "no");
+		return new ResultAdapter.ResultItem(getString(R.string.activity_main_veggies_title),
+				getString(R.string.activity_result_veggies_no));
 	}
 
 	private String[] getVeggiesStrings(Integer[] veggies) {
@@ -175,7 +176,8 @@ public class ResultActivity extends AppCompatActivity {
 			return new ResultAdapter.ResultItem(getString(R.string.activity_main_cheeses_title),
 					TextUtils.join(", ", getCheesesStrings(cheeses)));
 		}
-		return new ResultAdapter.ResultItem(getString(R.string.activity_main_cheeses_title), "no");
+		return new ResultAdapter.ResultItem(getString(R.string.activity_main_cheeses_title),
+				getString(R.string.activity_result_cheese_no));
 	}
 
 	private String[] getCheesesStrings(Integer[] cheeses) {

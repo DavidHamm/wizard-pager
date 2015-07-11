@@ -17,10 +17,12 @@ import com.hammwerk.wizardpager.core.PageValidityListener;
 import com.hammwerk.wizardpager.core.WizardPagerAdapter;
 import com.hammwerk.wizardpager.core.WizardTree;
 import com.hammwerk.wizardpager.core.WizardTreeChangeListener;
+import com.hammwerk.wizardpager.core.WizardTreeFragment;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+	public static final String TAG_WIZARD_TREE = "com.hammwerk.placeorder.tag.WIZARD_TREE";
 	private WizardPagerAdapter adapter;
 	private ViewPager viewPager;
 	private Button nextButton;
@@ -32,9 +34,19 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		wizardTree = createWizardTree();
+		WizardTreeFragment wizardTreeFragment = (WizardTreeFragment) getSupportFragmentManager()
+				.findFragmentByTag(TAG_WIZARD_TREE);
+		if (wizardTreeFragment != null) {
+			wizardTree = wizardTreeFragment.getWizardTree();
+		} else {
+			wizardTree = createWizardTree();
+			wizardTreeFragment = new WizardTreeFragment();
+			wizardTreeFragment.setWizardTree(wizardTree);
+			getSupportFragmentManager().beginTransaction().add(wizardTreeFragment, TAG_WIZARD_TREE).commit();
+		}
+
 		wizardTree.setPageValidityListener(new MyPageValidityListener());
-		wizardTree.addWizardTreeChangeListener(new MyWizardTreeChangeListener());
+		wizardTree.setWizardTreeChangeListener(new MyWizardTreeChangeListener());
 
 		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
 		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
@@ -43,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
 
 		nextButton = (Button) findViewById(R.id.activity_main_next_button);
 		backButton = (Button) findViewById(R.id.activity_main_back_button);
+
+		backButton.setVisibility(viewPager.getCurrentItem() > 0 ? View.VISIBLE : View.INVISIBLE);
+		nextButton.setEnabled(adapter.isPageValid(viewPager.getCurrentItem()));
+		nextButton.setText(wizardTree.isLastPage(wizardTree.getPage(viewPager.getCurrentItem())) ?
+				getString(R.string.activity_main_review_order) :
+				getString(R.string.activity_main_next));
 	}
 
 	public void onBackClick(View view) {
@@ -141,11 +159,14 @@ public class MainActivity extends AppCompatActivity {
 		Integer toasted = wizardTree.<SingleFixedChoiceBranchPage>getPage(5).getResult();
 		resultIntent
 				.putExtra(ResultActivity.EXTRA_BREAD, bread)
-				.putExtra(ResultActivity.EXTRA_MEATS, meats.toArray(new Integer[meats.size()]))
-				.putExtra(ResultActivity.EXTRA_VEGGIES, veggies.toArray(new Integer[veggies.size()]))
-				.putExtra(ResultActivity.EXTRA_CHEESES, cheeses.toArray(new Integer[cheeses.size()]))
-				.putExtra(ResultActivity.EXTRA_TOASTED, toasted);
-
+				.putExtra(ResultActivity.EXTRA_MEATS, meats.toArray(new Integer[meats.size()]));
+		if (veggies != null) {
+			resultIntent.putExtra(ResultActivity.EXTRA_VEGGIES, veggies.toArray(new Integer[veggies.size()]));
+		}
+		if (cheeses != null) {
+			resultIntent.putExtra(ResultActivity.EXTRA_CHEESES, cheeses.toArray(new Integer[cheeses.size()]));
+		}
+		resultIntent.putExtra(ResultActivity.EXTRA_TOASTED, toasted);
 		if (isToastedSelected()) {
 			addToastTimeExtra(resultIntent);
 		}
@@ -203,4 +224,5 @@ public class MainActivity extends AppCompatActivity {
 					getString(R.string.activity_main_next));
 		}
 	}
+
 }

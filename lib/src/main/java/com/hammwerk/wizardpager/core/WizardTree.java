@@ -2,14 +2,12 @@ package com.hammwerk.wizardpager.core;
 
 import android.support.v4.app.Fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class WizardTree {
 	private final Branch trunk;
 	private final PageListener pageListener;
-	private final List<WizardTreeChangeListener> wizardTreeChangeListener = new ArrayList<>();
+	private WizardTreeListener wizardTreeListener;
 	private PageValidityListener pageValidityListener;
+	private WizardTreeChangeListener wizardTreeChangeListener;
 
 	public WizardTree(Page... pages) {
 		this.trunk = new Branch(pages);
@@ -24,12 +22,16 @@ public class WizardTree {
 		}
 	}
 
-	public void addWizardTreeChangeListener(WizardTreeChangeListener listener) {
-		this.wizardTreeChangeListener.add(listener);
+	void setWizardTreeListener(WizardTreeListener wizardTreeListener) {
+		this.wizardTreeListener = wizardTreeListener;
 	}
 
 	public void setPageValidityListener(PageValidityListener pageValidityListener) {
 		this.pageValidityListener = pageValidityListener;
+	}
+
+	public void setWizardTreeChangeListener(WizardTreeChangeListener wizardTreeChangeListener) {
+		this.wizardTreeChangeListener = wizardTreeChangeListener;
 	}
 
 	public <T extends Page> T getPage(int position) {
@@ -131,11 +133,14 @@ public class WizardTree {
 	private class MyPageListener implements PageListener {
 		@Override
 		public void onPageValid(Page page) {
-			for (WizardTreeChangeListener i : wizardTreeChangeListener) {
-				i.onTreeChanged(getPositionOfPage(page) + 1);
+			if (wizardTreeListener != null) {
+				wizardTreeListener.onTreeChanged(getPositionOfPage(page) + 1);
 			}
 			if (pageValidityListener != null) {
 				pageValidityListener.onPageValid(page, getPositionOfPage(page));
+			}
+			if (wizardTreeChangeListener != null) {
+				wizardTreeChangeListener.onTreeChanged(getPositionOfPage(page) + 1);
 			}
 		}
 

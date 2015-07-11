@@ -25,19 +25,22 @@ public class SingleFixedChoicePageFragment extends ListFragment {
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setListAdapter(new ArrayAdapter<>(getActivity(),
-				android.R.layout.simple_list_item_single_choice,
-				android.R.id.text1,
-				getArguments().getStringArray(KEY_CHOICES)));
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_single_fixed_choice_page, container, false);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_single_fixed_choice_page, container, false);
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		((TextView) view.findViewById(android.R.id.title)).setText(page.getTitle());
-		return view;
+		ListView listView = (ListView) view.findViewById(android.R.id.list);
+		listView.setAdapter(new ArrayAdapter<>(getActivity(),
+				android.R.layout.simple_list_item_single_choice,
+				android.R.id.text1,
+				getArguments().getStringArray(KEY_CHOICES)));
+		if (page.getResult() != null) {
+			listView.setItemChecked(page.getResult(), true);
+		}
 	}
 
 	@Override

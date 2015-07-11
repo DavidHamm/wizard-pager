@@ -54,7 +54,9 @@
 	<string name="activity_main_toast_time_title">Toast time</string>
 	<string name="activity_main_toast_time_minutes">minutes</string>
 
-	<string name="title_activity_result">ResultActivity</string>
+	<string name="title_activity_result">Review Order</string>
 	<string name="activity_result_back">Back</string>
 	<string name="activity_result_submit_order">Submit Order</string>
+	<string name="activity_result_cheese_no">No</string>
+	<string name="activity_result_veggies_no">No</string>
 </resources>
