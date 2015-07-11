@@ -32,8 +32,7 @@
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
 			android:onClick="onBackClick"
-			android:text="@string/activity_main_back"
-			android:visibility="invisible"/>
+			android:text="@string/activity_main_back"/>
 
 		<Button
 			android:id="@+id/activity_main_next_button"
@@ -41,7 +40,6 @@
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:enabled="false"
 			android:onClick="onNextClick"
 			android:text="@string/activity_main_next"/>
 	</LinearLayout>

@@ -26,6 +26,7 @@ public abstract class Page<T> {
 	public Fragment getFragment() {
 		if (fragment == null) {
 			fragment = createFragment();
+			fragment.setRetainInstance(true);
 		}
 		return fragment;
 	}
