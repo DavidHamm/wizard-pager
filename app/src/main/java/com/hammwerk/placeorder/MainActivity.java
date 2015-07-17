@@ -11,9 +11,7 @@ import com.hammwerk.wizardpager.IntegerPage;
 import com.hammwerk.wizardpager.MultiFixedChoicePage;
 import com.hammwerk.wizardpager.SingleFixedChoiceBranchPage;
 import com.hammwerk.wizardpager.SingleFixedChoicePage;
-import com.hammwerk.wizardpager.core.Branch;
 import com.hammwerk.wizardpager.core.Page;
-import com.hammwerk.wizardpager.core.PageValidityListener;
 import com.hammwerk.wizardpager.core.WizardPagerAdapter;
 import com.hammwerk.wizardpager.core.WizardTree;
 import com.hammwerk.wizardpager.core.WizardTreeChangeListener;
@@ -45,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 			getSupportFragmentManager().beginTransaction().add(wizardTreeFragment, TAG_WIZARD_TREE).commit();
 		}
 
-		wizardTree.setPageValidityListener(new MyPageValidityListener());
 		wizardTree.setWizardTreeChangeListener(new MyWizardTreeChangeListener());
 
 		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
@@ -77,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
 	private WizardTree createWizardTree() {
 		return new WizardTree(
-				new SingleFixedChoiceBranchPage(getString(R.string.activity_main_order_type_title),
-						new Branch(getString(R.string.activity_main_order_type_sandwich),
+				new SingleFixedChoiceBranchPage(getString(R.string.activity_main_order_type_title))
+						.addBranch(getString(R.string.activity_main_order_type_sandwich),
 								new SingleFixedChoicePage(getString(R.string.activity_main_bread_title),
 										getString(R.string.activity_main_bread_white),
 										getString(R.string.activity_main_bread_wheat),
@@ -108,12 +105,12 @@ public class MainActivity extends AppCompatActivity {
 										getString(R.string.activity_main_cheeses_white_american),
 										getString(R.string.activity_main_cheeses_cheddar),
 										getString(R.string.activity_main_cheeses_bleu)),
-								new SingleFixedChoiceBranchPage(getString(R.string.activity_main_toasted_title),
-										new Branch(getString(R.string.activity_main_toasted_yes),
+								new SingleFixedChoiceBranchPage(getString(R.string.activity_main_toasted_title))
+										.addBranch(getString(R.string.activity_main_toasted_yes),
 												new IntegerPage(getString(R.string.activity_main_toast_time_title),
-														getString(R.string.activity_main_toast_time_minutes))),
-										new Branch(getString(R.string.activity_main_toasted_no)))),
-						new Branch(getString(R.string.activity_main_order_type_salad),
+														getString(R.string.activity_main_toast_time_minutes)))
+										.addBranch(getString(R.string.activity_main_toasted_no)))
+						.addBranch(getString(R.string.activity_main_order_type_salad),
 								new SingleFixedChoicePage(getString(R.string.activity_main_salad_type_title),
 										getString(R.string.activity_main_salad_type_greek),
 										getString(R.string.activity_main_salad_type_caesar)),
@@ -122,9 +119,7 @@ public class MainActivity extends AppCompatActivity {
 										getString(R.string.activity_main_dressing_balsamic),
 										getString(R.string.activity_main_dressing_oil_and_vinegar),
 										getString(R.string.activity_main_dressing_thousand_island),
-										getString(R.string.activity_main_dressing_italian))))) {
-
-		};
+										getString(R.string.activity_main_dressing_italian))));
 	}
 
 	private Intent createResultIntent() {
@@ -189,7 +184,14 @@ public class MainActivity extends AppCompatActivity {
 		resultIntent.putExtra(ResultActivity.EXTRA_TOAST_TIME, toastTimeInMinutes);
 	}
 
-	private class MyPageValidityListener implements PageValidityListener {
+	private class MyWizardTreeChangeListener implements WizardTreeChangeListener {
+		@Override
+		public void onTreeChanged(int pageIndex) {
+			nextButton.setText(wizardTree.isLastPage(wizardTree.getPage(viewPager.getCurrentItem())) ?
+					getString(R.string.activity_main_review_order) :
+					getString(R.string.activity_main_next));
+		}
+
 		@Override
 		public void onPageValid(Page page, int pageIndex) {
 			if (viewPager.getCurrentItem() == pageIndex) {
@@ -202,15 +204,6 @@ public class MainActivity extends AppCompatActivity {
 			if (viewPager.getCurrentItem() == pageIndex) {
 				nextButton.setEnabled(false);
 			}
-		}
-	}
-
-	private class MyWizardTreeChangeListener implements WizardTreeChangeListener {
-		@Override
-		public void onTreeChanged(int pageIndex) {
-			nextButton.setText(wizardTree.isLastPage(wizardTree.getPage(viewPager.getCurrentItem())) ?
-					getString(R.string.activity_main_review_order) :
-					getString(R.string.activity_main_next));
 		}
 	}
 

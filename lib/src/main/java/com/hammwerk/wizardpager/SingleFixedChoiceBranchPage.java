@@ -2,12 +2,11 @@ package com.hammwerk.wizardpager;
 
 import android.support.v4.app.Fragment;
 
-import com.hammwerk.wizardpager.core.Branch;
 import com.hammwerk.wizardpager.core.BranchPage;
 
 public class SingleFixedChoiceBranchPage extends BranchPage {
-	public SingleFixedChoiceBranchPage(String title, Branch... branches) {
-		super(title, branches);
+	public SingleFixedChoiceBranchPage(String title) {
+		super(title);
 	}
 
 	@Override

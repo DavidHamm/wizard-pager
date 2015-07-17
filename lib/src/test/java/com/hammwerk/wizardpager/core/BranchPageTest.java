@@ -17,84 +17,178 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(HierarchicalContextRunner.class)
 public class BranchPageTest {
-	@Test(expected = BranchPage.LessThenTwoBranchesException.class)
-	public void createEmptyBranchPage_shouldThrowLessThenTwoBranchesException() throws Exception {
-		new TestBranchPage("Branch Page");
-	}
-
-	@Test(expected = BranchPage.LessThenTwoBranchesException.class)
-	public void createBranchPageWithOneBranch_shouldThrowLessThenTwoBranchesException() throws Exception {
-		new TestBranchPage("Branch Page", new Branch("Branch", new TestPage("Page")));
-	}
-
-	public class GivenABranchPageWithTwoBranches {
-		private BranchPage branchPage;
-		private Branch firstBranch;
+	public class GivenABranchPage {
+		private TestBranchPage branchPage;
 
 		@Before
-		public void givenABranchPage() throws Exception {
-			firstBranch = new Branch("First Branch", new TestPage("First Page"));
-			Branch secondBranch = new Branch("Second Branch", new TestPage("Second Page"));
-			branchPage = new TestBranchPage("Branch Page", firstBranch, secondBranch);
+		public void setUp() {
+			branchPage = new TestBranchPage("Branch Page");
+		}
+
+		@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+		public void whenGetSelectedBranch_throwTwoBranchesRequiredException() throws Exception {
+			branchPage.getSelectedBranch();
+		}
+
+		@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+		public void whenSelectBranch_throwTwoBranchesRequiredException() throws Exception {
+			branchPage.selectBranch(0);
+		}
+
+		@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+		public void whenGetChoices_throwTwoBranchesRequiredException() throws Exception {
+			branchPage.getChoices();
 		}
 
 		@Test
-		public void whenGetChoosenBranch_thenReturnNull() throws Exception {
-			assertNull(branchPage.getSelectedBranch());
+		public void whenAskForValidity_returnInvalid() throws Exception {
+			branchPage.isValid();
 		}
 
 		@Test
-		public void whenAskForValidity_thenReturnFalse() throws Exception {
-			assertFalse(branchPage.isValid());
+		public void whenGetResult_returnNull() throws Exception {
+			assertNull(branchPage.getResult());
 		}
 
-		@Test
-		public void whenGetChoices_thenReturnChoices() throws Exception {
-			assertArrayEquals(new String[]{"First Branch", "Second Branch"}, branchPage.getChoices());
-		}
-
-		public class GivenASelectedBranch {
+		public class GivenAnEmptyBranch {
 			@Before
-			public void givenASelectedBranch() throws Exception {
+			public void setUp() {
+				branchPage.addBranch("Branch");
+			}
+
+			@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+			public void whenGetSelectedBranch_throwTwoBranchesRequiredException() throws Exception {
+				branchPage.getSelectedBranch();
+			}
+
+			@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+			public void whenSelectBranch_throwTwoBranchesRequiredException() throws Exception {
 				branchPage.selectBranch(0);
 			}
 
-			@Test
-			public void whenGetSelectedBranch_thenReturnSelectedBranch() throws Exception {
-				assertEquals(firstBranch, branchPage.getSelectedBranch());
+			@Test(expected = BranchPage.TwoBranchesRequiredException.class)
+			public void whenGetChoices_throwTwoBranchesRequiredException() throws Exception {
+				branchPage.getChoices();
 			}
 
 			@Test
-			public void whenAskForValidity_thenReturnTrue() throws Exception {
-				assertTrue(branchPage.isValid());
+			public void whenAskForValidity_returnNull() throws Exception {
+				branchPage.isValid();
 			}
 
 			@Test
-			public void whenGetResult_thenReturnSelectedBranchIndex() throws Exception {
-				assertEquals(Integer.valueOf(0), branchPage.getResult());
+			public void whenGetResult_returnNull() throws Exception {
+				assertNull(branchPage.getResult());
 			}
 		}
 
-		public class GivenABranchPageListener {
-			protected BranchPageListener branchPageListener;
+		public class GivenTwoEmptyBranches {
+			@Before
+			public void setUp() {
+				branchPage
+						.addBranch("First Branch")
+						.addBranch("Second Branch");
+			}
+
+			@Test
+			public void whenGetSelectedBranch_returnNull() throws Exception {
+				assertNull(branchPage.getSelectedBranch());
+			}
+
+			@Test
+			public void whenAskForValidity_returnInvalid() throws Exception {
+				assertFalse(branchPage.isValid());
+			}
+
+			@Test
+			public void whenGetChoices_returnBranchNames() throws Exception {
+				assertArrayEquals(new String[]{"First Branch", "Second Branch"}, branchPage.getChoices());
+			}
+
+			@Test
+			public void whenGetResult_returnNull() throws Exception {
+				assertNull(branchPage.getResult());
+			}
+
+			public class GivenASelectedBranch {
+				@Before
+				public void setUp() {
+					branchPage.selectBranch(0);
+				}
+
+				@Test
+				public void whenGetSelectedBranch_returnSelectedBranch() throws Exception {
+					assertEquals("First Branch", branchPage.getSelectedBranch().getName());
+				}
+
+				@Test
+				public void whenAskForValidity_returnValid() throws Exception {
+					assertTrue(branchPage.isValid());
+				}
+
+				@Test
+				public void whenGetResult_returnSelectedBranchIndex() throws Exception {
+					assertEquals(Integer.valueOf(0), branchPage.getResult());
+				}
+			}
+
+			public class GivenABranchPageListener {
+				private BranchPageListener branchPageListener;
+
+				@Before
+				public void setup() throws Exception {
+					branchPageListener = mock(BranchPageListener.class);
+					branchPage.setBranchPageListener(branchPageListener);
+				}
+
+				public class GivenASelectedBranch {
+					@Before
+					public void setup() throws Exception {
+						branchPage.selectBranch(0);
+					}
+
+					@Test
+					public void verifyOnBranchSelectedWasCalledOnce() throws Exception {
+						verify(branchPageListener, times(1)).onBranchSelected(branchPage);
+					}
+				}
+
+				public class GivenABranchSelectedMultipleTimes {
+					@Before
+					public void setup() throws Exception {
+						branchPage.selectBranch(0);
+						branchPage.selectBranch(0);
+					}
+
+					@Test
+					public void verifyOnBranchSelectedWasCalledOnce() throws Exception {
+						verify(branchPageListener, times(1)).onBranchSelected(branchPage);
+					}
+				}
+			}
+		}
+
+		public class GivenTwoBranchesWithPages {
+			private Page pageInFirstBranch;
 
 			@Before
-			public void givenABranchPageListener() throws Exception {
-				branchPageListener = mock(BranchPageListener.class);
-				branchPage.setBranchPageListener(branchPageListener);
+			public void setup() throws Exception {
+				pageInFirstBranch = new TestPage("Page in first Branch");
+				branchPage
+						.addBranch("First Branch", pageInFirstBranch)
+						.addBranch("Second Branch", new TestPage("Page in second Branch"));
 			}
 
-			@Test
-			public void whenChooseBranch_thenCallOnBranchChoosenCallback() throws Exception {
-				branchPage.selectBranch(0);
-				verify(branchPageListener, times(1)).onBranchChoosen(branchPage);
-			}
+			public class GivenASelectedBranch {
+				@Before
+				public void setup() throws Exception {
+					branchPage.selectBranch(0);
+				}
 
-			@Test
-			public void whenChooseBranchMultipleTimes_thenCallOnBranchChoosenCallbackOneTime() throws Exception {
-				branchPage.selectBranch(0);
-				branchPage.selectBranch(0);
-				verify(branchPageListener, times(1)).onBranchChoosen(branchPage);
+				@Test
+				public void whenGetPageInSelectedBranch_returnPageInSelectedBranch() throws Exception {
+					assertEquals(pageInFirstBranch, branchPage.getSelectedBranch().getPage(0));
+				}
 			}
 		}
 	}

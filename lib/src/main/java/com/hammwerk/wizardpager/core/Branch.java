@@ -3,7 +3,7 @@ package com.hammwerk.wizardpager.core;
 import java.util.Arrays;
 import java.util.List;
 
-public class Branch {
+class Branch {
 	private final List<Page> pages;
 	private final String name;
 

@@ -6,7 +6,6 @@ public class WizardTree {
 	private final Branch trunk;
 	private final PageListener pageListener;
 	private WizardTreeListener wizardTreeListener;
-	private PageValidityListener pageValidityListener;
 	private WizardTreeChangeListener wizardTreeChangeListener;
 
 	public WizardTree(Page... pages) {
@@ -24,10 +23,6 @@ public class WizardTree {
 
 	void setWizardTreeListener(WizardTreeListener wizardTreeListener) {
 		this.wizardTreeListener = wizardTreeListener;
-	}
-
-	public void setPageValidityListener(PageValidityListener pageValidityListener) {
-		this.pageValidityListener = pageValidityListener;
 	}
 
 	public void setWizardTreeChangeListener(WizardTreeChangeListener wizardTreeChangeListener) {
@@ -118,12 +113,12 @@ public class WizardTree {
 
 	private class MyBranchPageListener implements BranchPageListener {
 		@Override
-		public void onBranchChoosen(BranchPage branchPage) {
-			Branch choosenBranch = branchPage.getSelectedBranch();
-			for (Page i : choosenBranch.getPages()) {
+		public void onBranchSelected(BranchPage branchPage) {
+			Branch selectedBranch = branchPage.getSelectedBranch();
+			for (Page i : selectedBranch.getPages()) {
 				i.setPageListener(pageListener);
 			}
-			BranchPage nextBranchPage = choosenBranch.getBranchPage();
+			BranchPage nextBranchPage = selectedBranch.getBranchPage();
 			if (nextBranchPage != null) {
 				nextBranchPage.setBranchPageListener(this);
 			}
@@ -136,18 +131,16 @@ public class WizardTree {
 			if (wizardTreeListener != null) {
 				wizardTreeListener.onTreeChanged(getPositionOfPage(page) + 1);
 			}
-			if (pageValidityListener != null) {
-				pageValidityListener.onPageValid(page, getPositionOfPage(page));
-			}
 			if (wizardTreeChangeListener != null) {
 				wizardTreeChangeListener.onTreeChanged(getPositionOfPage(page) + 1);
+				wizardTreeChangeListener.onPageValid(page, getPositionOfPage(page));
 			}
 		}
 
 		@Override
 		public void onPageInvalid(Page page) {
-			if (pageValidityListener != null) {
-				pageValidityListener.onPageInvalid(page, getPositionOfPage(page));
+			if (wizardTreeChangeListener != null) {
+				wizardTreeChangeListener.onPageInvalid(page, getPositionOfPage(page));
 			}
 		}
 	}

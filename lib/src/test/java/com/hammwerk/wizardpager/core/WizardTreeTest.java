@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 public class WizardTreeTest {
 	public class GivenAWizardTreeWithAPage {
 		private WizardTree wizardTree;
-		private TestPage page;
+		private Page page;
 
 		@Before
 		public void setUp() throws Exception {
@@ -58,33 +58,33 @@ public class WizardTreeTest {
 		}
 
 		public class GivenAPageValidityListener {
-			private PageValidityListener pageValidityListener;
+			private WizardTreeChangeListener wizardTreeChangeListener;
 
 			@Before
 			public void setUp() throws Exception {
-				pageValidityListener = mock(PageValidityListener.class);
-				wizardTree.setPageValidityListener(pageValidityListener);
+				wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				wizardTree.setWizardTreeChangeListener(wizardTreeChangeListener);
 			}
 
 			@Test
 			public void whenPageCompleted_thenCallOnPageValidCallback() throws Exception {
 				page.setCompleted();
-				verify(pageValidityListener, times(0)).onPageValid(page, 0);
+				verify(wizardTreeChangeListener, times(0)).onPageValid(page, 0);
 			}
 		}
 	}
 
 	public class GivenAWizardTreeWithTrunkAndTwoEmptyBranches {
 		private WizardTree wizardTree;
-		private TestPage pageInTrunkBranch;
-		private TestBranchPage branchPageInTrunkBranch;
+		private Page pageInTrunkBranch;
+		private BranchPage branchPageInTrunkBranch;
 
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
-			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch",
-					new Branch("First Branch"),
-					new Branch("Second Branch"));
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
+					.addBranch("First Branch")
+					.addBranch("Second Branch");
 			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
 		}
 
@@ -133,17 +133,17 @@ public class WizardTreeTest {
 
 	public class GivenAWizardTreeWithTrunkAndTwoBranches {
 		private WizardTree wizardTree;
-		private TestPage pageInTrunkBranch;
-		private TestBranchPage branchPageInTrunkBranch;
-		private TestPage pageInFirstBranch;
+		private Page pageInTrunkBranch;
+		private BranchPage branchPageInTrunkBranch;
+		private Page pageInFirstBranch;
 
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
-			pageInFirstBranch = new TestPage("Page in First Branch");
-			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch",
-					new Branch("First Branch", pageInFirstBranch),
-					new Branch("Second Branch", new TestPage("Page in Second Branch")));
+			pageInFirstBranch = new TestPage("Page in first Branch");
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
+					.addBranch("First Branch", pageInFirstBranch)
+					.addBranch("Second Branch", new TestPage("Page in second Branch"));
 			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
 		}
 
@@ -228,19 +228,19 @@ public class WizardTreeTest {
 				assertTrue(wizardTree.isLastPage(pageInFirstBranch));
 			}
 
-			public class GivenAPageValidityListener {
-				private PageValidityListener pageValidityListener;
+			public class GivenAWizardTreeChangeListener {
+				private WizardTreeChangeListener wizardTreeChangeListener;
 
 				@Before
 				public void setUp() throws Exception {
-					pageValidityListener = mock(PageValidityListener.class);
-					wizardTree.setPageValidityListener(pageValidityListener);
+					wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+					wizardTree.setWizardTreeChangeListener(wizardTreeChangeListener);
 				}
 
 				@Test
 				public void whenPageAfterBranchPageCompleted_thenCallOnPageValidCallback() throws Exception {
 					pageInFirstBranch.setCompleted();
-					verify(pageValidityListener, times(0)).onPageValid(pageInFirstBranch, 2);
+					verify(wizardTreeChangeListener, times(0)).onPageValid(pageInFirstBranch, 2);
 				}
 			}
 		}
@@ -248,21 +248,21 @@ public class WizardTreeTest {
 
 	public class GivenAWizardTreeWithTrunkAndTwoBranchesAndTwoBranches {
 		private WizardTree wizardTree;
-		private TestBranchPage branchPageInTrunkBranch;
-		private TestPage pageInFirstBranch;
-		private TestBranchPage branchPageInFirstBranch;
-		private TestPage pageInTrunkBranch;
+		private BranchPage branchPageInTrunkBranch;
+		private Page pageInFirstBranch;
+		private BranchPage branchPageInFirstBranch;
+		private Page pageInTrunkBranch;
 
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
 			pageInFirstBranch = new TestPage("Page in first Branch");
-			branchPageInFirstBranch = new TestBranchPage("Branch Page in first Branch",
-					new Branch("First Branch in first Branch"),
-					new Branch("Second Branch in first Branch"));
-			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch",
-					new Branch("First Branch", pageInFirstBranch, branchPageInFirstBranch),
-					new Branch("Second Branch"));
+			branchPageInFirstBranch = new TestBranchPage("Branch Page in first Branch")
+					.addBranch("First Branch in first Branch")
+					.addBranch("Second Branch in first Branch");
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
+					.addBranch("First Branch", pageInFirstBranch, branchPageInFirstBranch)
+					.addBranch("Second Branch");
 			wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
 		}
 
@@ -364,7 +364,7 @@ public class WizardTreeTest {
 
 	public class GivenAWizardTreeWithARequiredPage {
 		private WizardTree wizardTree;
-		private TestPage requiredPage;
+		private Page requiredPage;
 
 		@Before
 		public void setUp() throws Exception {
@@ -372,42 +372,42 @@ public class WizardTreeTest {
 			wizardTree = new WizardTree(requiredPage);
 		}
 
-		public class GivenAPageValidityListener {
-			private PageValidityListener pageValidityListener;
+		public class GivenAWizardTreeChangeListener {
+			private WizardTreeChangeListener wizardTreeChangeListener;
 
 			@Before
 			public void setUp() throws Exception {
-				pageValidityListener = mock(PageValidityListener.class);
-				wizardTree.setPageValidityListener(pageValidityListener);
+				wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+				wizardTree.setWizardTreeChangeListener(wizardTreeChangeListener);
 			}
 
 			@Test
 			public void whenPageCompleted_thenCallOnPageValidCallback() throws Exception {
 				requiredPage.setCompleted();
-				verify(pageValidityListener, times(1)).onPageValid(requiredPage, 0);
+				verify(wizardTreeChangeListener, times(1)).onPageValid(requiredPage, 0);
 			}
 
 			@Test
 			public void whenPageNotCompleted_thenCallOnPageInvalidCallback() throws Exception {
 				requiredPage.setNotCompleted();
-				verify(pageValidityListener, times(1)).onPageInvalid(requiredPage, 0);
+				verify(wizardTreeChangeListener, times(1)).onPageInvalid(requiredPage, 0);
 			}
 		}
 	}
 
 	public class GivenAWizardTreeWithTrunkAndTwoBranchesAndRequiredPages {
 		private WizardTree wizardTree;
-		private TestPage requiredPageInTrunkBranch;
-		private TestBranchPage branchPage;
-		private TestPage requiredPageInFirstBranch;
+		private Page requiredPageInTrunkBranch;
+		private BranchPage branchPage;
+		private Page requiredPageInFirstBranch;
 
 		@Before
 		public void setUp() throws Exception {
 			requiredPageInTrunkBranch = new TestPage("Required Page in Trunk Branch", true);
 			requiredPageInFirstBranch = new TestPage("Required Page in first Branch", true);
-			branchPage = new TestBranchPage("Branch Page",
-					new Branch("First Branch", requiredPageInFirstBranch),
-					new Branch("Second Branch"));
+			branchPage = new TestBranchPage("Branch Page")
+					.addBranch("First Branch", requiredPageInFirstBranch)
+					.addBranch("Second Branch");
 			wizardTree = new WizardTree(requiredPageInTrunkBranch, branchPage);
 		}
 
@@ -417,25 +417,25 @@ public class WizardTreeTest {
 				branchPage.selectBranch(0);
 			}
 
-			public class GivenAPageValidityListener {
-				private PageValidityListener pageValidityListener;
+			public class GivenAWizardTreeChangeListener {
+				private WizardTreeChangeListener wizardTreeChangeListener;
 
 				@Before
 				public void setUp() throws Exception {
-					pageValidityListener = mock(PageValidityListener.class);
-					wizardTree.setPageValidityListener(pageValidityListener);
+					wizardTreeChangeListener = mock(WizardTreeChangeListener.class);
+					wizardTree.setWizardTreeChangeListener(wizardTreeChangeListener);
 				}
 
 				@Test
 				public void whenPageAfterBranchPageCompleted_thenCallOnPageValidCallback() throws Exception {
 					requiredPageInFirstBranch.setCompleted();
-					verify(pageValidityListener, times(1)).onPageValid(requiredPageInFirstBranch, 2);
+					verify(wizardTreeChangeListener, times(1)).onPageValid(requiredPageInFirstBranch, 2);
 				}
 
 				@Test
 				public void whenPageAfterBranchPageNotCompleted_thenCallOnPageInvalidCallback() throws Exception {
 					requiredPageInFirstBranch.setNotCompleted();
-					verify(pageValidityListener, times(1)).onPageInvalid(requiredPageInFirstBranch, 2);
+					verify(wizardTreeChangeListener, times(1)).onPageInvalid(requiredPageInFirstBranch, 2);
 				}
 			}
 		}
