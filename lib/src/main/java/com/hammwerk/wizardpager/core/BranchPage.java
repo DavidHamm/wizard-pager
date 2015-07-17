@@ -1,37 +1,47 @@
 package com.hammwerk.wizardpager.core;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BranchPage extends Page<Integer> {
-	protected final List<Branch> branches;
+	protected List<Branch> branches = new ArrayList<>();
 	private Branch selectedBranch;
 	private BranchPageListener branchPageListener;
 
-	public BranchPage(String title, Branch... branches) {
+	public BranchPage(String title) {
 		super(title, true);
-		if (branches.length < 2) {
-			throw new LessThenTwoBranchesException();
-		}
-		this.branches = Arrays.asList(branches);
+	}
+
+	public BranchPage addBranch(String branchName, Page... pages) {
+		branches.add(new Branch(branchName, pages));
+		return this;
 	}
 
 	public void selectBranch(int index) {
+		if (branches.size() < 2) {
+			throw new TwoBranchesRequiredException();
+		}
 		if (!branches.get(index).equals(selectedBranch)) {
 			selectedBranch = branches.get(index);
 			setResult(index);
-			if (branchPageListener != null) {
-				branchPageListener.onBranchChoosen(this);
-			}
 			setCompleted();
+			if (branchPageListener != null) {
+				branchPageListener.onBranchSelected(this);
+			}
 		}
 	}
 
 	public Branch getSelectedBranch() {
+		if (branches.size() < 2) {
+			throw new TwoBranchesRequiredException();
+		}
 		return selectedBranch;
 	}
 
 	public String[] getChoices() {
+		if (branches.size() < 2) {
+			throw new TwoBranchesRequiredException();
+		}
 		String[] choices = new String[branches.size()];
 		for (int i = 0; i < branches.size(); i++) {
 			choices[i] = branches.get(i).getName();
@@ -39,10 +49,10 @@ public abstract class BranchPage extends Page<Integer> {
 		return choices;
 	}
 
-	public void setBranchPageListener(BranchPageListener listener) {
+	void setBranchPageListener(BranchPageListener listener) {
 		this.branchPageListener = listener;
 	}
 
-	public class LessThenTwoBranchesException extends RuntimeException {
+	public class TwoBranchesRequiredException extends RuntimeException {
 	}
 }

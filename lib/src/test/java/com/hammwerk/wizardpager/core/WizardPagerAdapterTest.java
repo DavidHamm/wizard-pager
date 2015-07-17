@@ -22,7 +22,7 @@ public class WizardPagerAdapterTest {
 	}
 
 	public class GivenWizardPagerWithOneRequiredPage {
-		private TestPage requiredPage;
+		private Page requiredPage;
 		private WizardPagerAdapter wizardPagerAdapter;
 
 		@Before
@@ -65,16 +65,16 @@ public class WizardPagerAdapterTest {
 	}
 
 	public class GivenWizardPagerWithAPageAndABranchPage {
-		private TestPage pageInTrunkBranch;
-		private TestBranchPage branchPageInTrunkBranch;
+		private Page pageInTrunkBranch;
+		private BranchPage branchPageInTrunkBranch;
 		private WizardPagerAdapter wizardPagerAdapter;
 
 		@Before
 		public void setUp() throws Exception {
 			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
-			branchPageInTrunkBranch = new TestBranchPage("Branch Page",
-					new Branch(new TestPage("Page in first Branch")),
-					new Branch(new TestPage("Page in second Branch")));
+			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
+					.addBranch("First Branch", new TestPage("Page in first Branch"))
+					.addBranch("Second Branch", new TestPage("Page in second Branch"));
 			WizardTree wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
 			wizardPagerAdapter = new WizardPagerAdapter(null, wizardTree) {
 				@Override

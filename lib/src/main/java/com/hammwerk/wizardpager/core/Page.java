@@ -49,7 +49,7 @@ public abstract class Page<T> {
 		return !required | completed;
 	}
 
-	public void setPageListener(PageListener listener) {
+	void setPageListener(PageListener listener) {
 		this.listener = listener;
 	}
 

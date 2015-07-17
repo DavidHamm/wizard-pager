@@ -19,9 +19,9 @@ public class BranchTest {
 	public void setUp() throws Exception {
 		firstPage = new TestPage("Title");
 		secondPage = new TestPage("Title");
-		Branch firstBranch = new Branch(firstPage);
-		Branch secondBranch = new Branch(secondPage);
-		branchPage = new TestBranchPage("Title", firstBranch, secondBranch);
+		branchPage = new TestBranchPage("Title")
+				.addBranch("First Branch", firstPage)
+				.addBranch("Second Branch", secondPage);
 	}
 
 	@Test

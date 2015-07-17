@@ -1,5 +1,5 @@
 package com.hammwerk.wizardpager.core;
 
-public interface BranchPageListener {
-	void onBranchChoosen(BranchPage branchPage);
+interface BranchPageListener {
+	void onBranchSelected(BranchPage branchPage);
 }
