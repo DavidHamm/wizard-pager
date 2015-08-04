@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar"/>
-
-	<style name="WizardPageTitle">
+	<style name="TextAppearance.WizardPager.PageTitle" parent="TextAppearance.AppCompat.Large">
 		<item name="android:textSize">36sp</item>
 		<item name="android:textColor">#1976D2</item>
 	</style>
