@@ -8,7 +8,7 @@
 
 	<TextView
 		android:id="@android:id/title"
-		style="?attr/WizardPageTitle"
+		style="?attr/pageTitleStyle"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
