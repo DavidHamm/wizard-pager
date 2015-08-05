@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
 		wizardTree.setWizardTreeChangeListener(new MyWizardTreeChangeListener());
 
-		adapter = new WizardPagerAdapter(getSupportFragmentManager(), wizardTree);
+		adapter = new WizardPagerAdapter(getSupportFragmentManager())
+				.setWizardTree(wizardTree);
 		viewPager = (ViewPager) findViewById(R.id.activity_main_view_pager);
 		viewPager.setAdapter(adapter);
 		viewPager.addOnPageChangeListener(new MySimpleOnPageChangeListener());
@@ -73,53 +74,53 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private WizardTree createWizardTree() {
-		return new WizardTree(
+		return new WizardTree().setPages(
 				new SingleFixedChoiceBranchPage(getString(R.string.activity_main_order_type_title))
 						.addBranch(getString(R.string.activity_main_order_type_sandwich),
-								new SingleFixedChoicePage(getString(R.string.activity_main_bread_title),
-										getString(R.string.activity_main_bread_white),
-										getString(R.string.activity_main_bread_wheat),
-										getString(R.string.activity_main_bread_rye),
-										getString(R.string.activity_main_bread_pretzel),
-										getString(R.string.activity_main_bread_ciabatta)),
-								new MultiFixedChoicePage(getString(R.string.activity_main_meats_title), true,
-										getString(R.string.activity_main_meats_pepperoni),
-										getString(R.string.activity_main_meats_turkey),
-										getString(R.string.activity_main_meats_ham),
-										getString(R.string.activity_main_meats_pastrami),
-										getString(R.string.activity_main_meats_roast_beef),
-										getString(R.string.activity_main_meats_bologna)),
-								new MultiFixedChoicePage(getString(R.string.activity_main_veggies_title),
-										getString(R.string.activity_main_veggies_tomatoes),
-										getString(R.string.activity_main_veggies_lettuce),
-										getString(R.string.activity_main_veggies_onions),
-										getString(R.string.activity_main_veggies_pickles),
-										getString(R.string.activity_main_veggies_cucumbers),
-										getString(R.string.activity_main_veggies_peppers)),
-								new MultiFixedChoicePage(getString(R.string.activity_main_cheeses_title),
-										getString(R.string.activity_main_cheeses_swiss),
-										getString(R.string.activity_main_cheeses_american),
-										getString(R.string.activity_main_cheeses_pepperjack),
-										getString(R.string.activity_main_cheeses_muenster),
-										getString(R.string.activity_main_cheeses_provolone),
-										getString(R.string.activity_main_cheeses_white_american),
-										getString(R.string.activity_main_cheeses_cheddar),
-										getString(R.string.activity_main_cheeses_bleu)),
+								new SingleFixedChoicePage(getString(R.string.activity_main_bread_title))
+										.setChoices(getString(R.string.activity_main_bread_white),
+												getString(R.string.activity_main_bread_wheat),
+												getString(R.string.activity_main_bread_rye),
+												getString(R.string.activity_main_bread_pretzel),
+												getString(R.string.activity_main_bread_ciabatta)),
+								new MultiFixedChoicePage(getString(R.string.activity_main_meats_title), true)
+										.setChoices(getString(R.string.activity_main_meats_pepperoni),
+												getString(R.string.activity_main_meats_turkey),
+												getString(R.string.activity_main_meats_ham),
+												getString(R.string.activity_main_meats_pastrami),
+												getString(R.string.activity_main_meats_roast_beef),
+												getString(R.string.activity_main_meats_bologna)),
+								new MultiFixedChoicePage(getString(R.string.activity_main_veggies_title))
+										.setChoices(getString(R.string.activity_main_veggies_tomatoes),
+												getString(R.string.activity_main_veggies_lettuce),
+												getString(R.string.activity_main_veggies_onions),
+												getString(R.string.activity_main_veggies_pickles),
+												getString(R.string.activity_main_veggies_cucumbers),
+												getString(R.string.activity_main_veggies_peppers)),
+								new MultiFixedChoicePage(getString(R.string.activity_main_cheeses_title))
+										.setChoices(getString(R.string.activity_main_cheeses_swiss),
+												getString(R.string.activity_main_cheeses_american),
+												getString(R.string.activity_main_cheeses_pepperjack),
+												getString(R.string.activity_main_cheeses_muenster),
+												getString(R.string.activity_main_cheeses_provolone),
+												getString(R.string.activity_main_cheeses_white_american),
+												getString(R.string.activity_main_cheeses_cheddar),
+												getString(R.string.activity_main_cheeses_bleu)),
 								new SingleFixedChoiceBranchPage(getString(R.string.activity_main_toasted_title))
 										.addBranch(getString(R.string.activity_main_toasted_yes),
 												new IntegerPage(getString(R.string.activity_main_toast_time_title),
 														getString(R.string.activity_main_toast_time_minutes)))
 										.addBranch(getString(R.string.activity_main_toasted_no)))
 						.addBranch(getString(R.string.activity_main_order_type_salad),
-								new SingleFixedChoicePage(getString(R.string.activity_main_salad_type_title),
-										getString(R.string.activity_main_salad_type_greek),
-										getString(R.string.activity_main_salad_type_caesar)),
-								new SingleFixedChoicePage(getString(R.string.activity_main_dressing_title),
-										getString(R.string.activity_main_dressing_no_dressing),
-										getString(R.string.activity_main_dressing_balsamic),
-										getString(R.string.activity_main_dressing_oil_and_vinegar),
-										getString(R.string.activity_main_dressing_thousand_island),
-										getString(R.string.activity_main_dressing_italian))));
+								new SingleFixedChoicePage(getString(R.string.activity_main_salad_type_title))
+										.setChoices(getString(R.string.activity_main_salad_type_greek),
+												getString(R.string.activity_main_salad_type_caesar)),
+								new SingleFixedChoicePage(getString(R.string.activity_main_dressing_title))
+										.setChoices(getString(R.string.activity_main_dressing_no_dressing),
+												getString(R.string.activity_main_dressing_balsamic),
+												getString(R.string.activity_main_dressing_oil_and_vinegar),
+												getString(R.string.activity_main_dressing_thousand_island),
+												getString(R.string.activity_main_dressing_italian))));
 	}
 
 	private Intent createResultIntent() {

@@ -13,7 +13,8 @@ public abstract class BranchPage extends Page<Integer> {
 	}
 
 	public BranchPage addBranch(String branchName, Page... pages) {
-		branches.add(new Branch(branchName, pages));
+		branches.add(new Branch(branchName)
+				.setPages(pages));
 		return this;
 	}
 

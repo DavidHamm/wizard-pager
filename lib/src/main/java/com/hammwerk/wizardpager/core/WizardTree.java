@@ -3,13 +3,13 @@ package com.hammwerk.wizardpager.core;
 import android.support.v4.app.Fragment;
 
 public class WizardTree {
-	private final Branch trunk;
-	private final PageListener pageListener;
+	private Branch trunk;
+	private PageListener pageListener;
 	private WizardTreeListener wizardTreeListener;
 	private WizardTreeChangeListener wizardTreeChangeListener;
 
-	public WizardTree(Page... pages) {
-		this.trunk = new Branch(pages);
+	public WizardTree setPages(Page... pages) {
+		this.trunk = new Branch().setPages(pages);
 		BranchPageListener branchPageListener = new MyBranchPageListener();
 		BranchPage branchPage = trunk.getBranchPage();
 		if (branchPage != null) {
@@ -19,6 +19,7 @@ public class WizardTree {
 		for (Page i : pages) {
 			i.setPageListener(pageListener);
 		}
+		return this;
 	}
 
 	void setWizardTreeListener(WizardTreeListener wizardTreeListener) {
@@ -30,6 +31,9 @@ public class WizardTree {
 	}
 
 	public <T extends Page> T getPage(int position) {
+		if (trunk == null) {
+			throw new PageIndexOutOfBoundsException();
+		}
 		int positionInBranch = position;
 		Branch branch = trunk;
 		while (positionInBranch >= branch.getNumberOfPages()) {
@@ -43,6 +47,9 @@ public class WizardTree {
 	}
 
 	public int getPositionOfPage(Page page) {
+		if (trunk == null) {
+			return -1;
+		}
 		int position = 0;
 		Branch branch = trunk;
 		do {
@@ -57,6 +64,9 @@ public class WizardTree {
 	}
 
 	public int getPositionOfPageFragment(Fragment fragment) {
+		if (trunk == null) {
+			return -1;
+		}
 		int position = 0;
 		Branch branch = trunk;
 		do {
@@ -106,9 +116,6 @@ public class WizardTree {
 			branch = getNextBranch(branch);
 		}
 		return false;
-	}
-
-	public static class PageIndexOutOfBoundsException extends RuntimeException {
 	}
 
 	private class MyBranchPageListener implements BranchPageListener {

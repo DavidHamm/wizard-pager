@@ -4,33 +4,33 @@ import java.util.Arrays;
 import java.util.List;
 
 class Branch {
-	private final List<Page> pages;
 	private final String name;
+	private List<Page> pages;
 
-	public Branch(Page... pages) {
-		this(null, pages);
+	public Branch() {
+		this(null);
 	}
 
-	public Branch(String name, Page... pages) {
-		for (int i = 0; i < pages.length - 1; i++) {
-			if (pages[i] instanceof BranchPage) {
-				throw new PageAfterBranchPageException();
-			}
-		}
-		this.pages = Arrays.asList(pages);
+	public Branch(String name) {
 		this.name = name;
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends Page> T getPage(int position) {
+		if (pages == null || position >= pages.size()) {
+			throw new PageIndexOutOfBoundsException();
+		}
 		return (T) pages.get(position);
 	}
 
 	public int getNumberOfPages() {
-		return pages.size();
+		return pages != null ? pages.size() : 0;
 	}
 
 	public int getNumberOfValidPages() {
+		if (pages == null) {
+			return 0;
+		}
 		for (int i = 0; i < pages.size(); i++) {
 			if (!pages.get(i).isValid()) {
 				return i;
@@ -40,7 +40,7 @@ class Branch {
 	}
 
 	public BranchPage getBranchPage() {
-		if (!pages.isEmpty()) {
+		if (pages != null && !pages.isEmpty()) {
 			Page page = pages.get(pages.size() - 1);
 			if (page instanceof BranchPage) {
 				return (BranchPage) page;
@@ -51,6 +51,16 @@ class Branch {
 
 	public List<Page> getPages() {
 		return pages;
+	}
+
+	public Branch setPages(Page... pages) {
+		for (int i = 0; i < pages.length - 1; i++) {
+			if (pages[i] instanceof BranchPage) {
+				throw new PageAfterBranchPageException();
+			}
+		}
+		this.pages = Arrays.asList(pages);
+		return this;
 	}
 
 	public String getName() {

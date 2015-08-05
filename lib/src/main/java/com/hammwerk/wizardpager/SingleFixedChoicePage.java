@@ -5,19 +5,23 @@ import android.support.v4.app.Fragment;
 import com.hammwerk.wizardpager.core.Page;
 
 public class SingleFixedChoicePage extends Page<Integer> {
-	private final String[] choices;
+	private String[] choices;
 
-	public SingleFixedChoicePage(String title, String... choices) {
-		this(title, true, choices);
+	public SingleFixedChoicePage(String title) {
+		this(title, true);
 	}
 
-	public SingleFixedChoicePage(String title, boolean required, String... choices) {
+	public SingleFixedChoicePage(String title, boolean required) {
 		super(title, required);
-		this.choices = choices;
 	}
 
 	@Override
 	protected Fragment createFragment() {
 		return SingleFixedChoicePageFragment.createInstance(this, choices);
+	}
+
+	public SingleFixedChoicePage setChoices(String... choices) {
+		this.choices = choices;
+		return this;
 	}
 }
