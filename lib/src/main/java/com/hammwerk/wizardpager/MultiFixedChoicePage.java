@@ -7,19 +7,23 @@ import com.hammwerk.wizardpager.core.Page;
 import java.util.List;
 
 public class MultiFixedChoicePage extends Page<List<Integer>> {
-	private final String[] choices;
+	private String[] choices;
 
-	public MultiFixedChoicePage(String title, String... choices) {
-		this(title, false, choices);
+	public MultiFixedChoicePage(String title) {
+		this(title, false);
 	}
 
-	public MultiFixedChoicePage(String title, boolean required, String... choices) {
+	public MultiFixedChoicePage(String title, boolean required) {
 		super(title, required);
-		this.choices = choices;
 	}
 
 	@Override
 	protected Fragment createFragment() {
 		return MultiFixedChoicePageFragment.createInstance(this, choices);
+	}
+
+	public MultiFixedChoicePage setChoices(String... choices) {
+		this.choices = choices;
+		return this;
 	}
 }

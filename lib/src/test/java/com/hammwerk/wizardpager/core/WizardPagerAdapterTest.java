@@ -11,24 +11,12 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(HierarchicalContextRunner.class)
 public class WizardPagerAdapterTest {
-	@Test
-	public void createWizardPagerAdapter() throws Exception {
-		new WizardPagerAdapter(null, new WizardTree(new TestPage("Page")));
-	}
-
-	@Test(expected = WizardPagerAdapter.WizardTreeIsNullException.class)
-	public void whenCreateWizardPagerAdapterWithNullWizardTree_thenTrowNullPointerException() throws Exception {
-		new WizardPagerAdapter(null, null);
-	}
-
-	public class GivenWizardPagerWithOneRequiredPage {
-		private Page requiredPage;
+	public class GivenAWizardPagerAdapter {
 		private WizardPagerAdapter wizardPagerAdapter;
 
 		@Before
 		public void setUp() throws Exception {
-			requiredPage = new TestPage("Page", true);
-			wizardPagerAdapter = new WizardPagerAdapter(null, new WizardTree(requiredPage)) {
+			wizardPagerAdapter = new WizardPagerAdapter(null) {
 				@Override
 				public void notifyDataSetChanged() {
 				}
@@ -36,75 +24,104 @@ public class WizardPagerAdapterTest {
 		}
 
 		@Test
-		public void whenGetCount_thenReturnNumberOfPages() throws Exception {
-			assertEquals(1, wizardPagerAdapter.getCount());
+		public void whenSetWizardTree_thenReturnWizardPagerAdapter() throws Exception {
+			assertEquals(wizardPagerAdapter, wizardPagerAdapter.setWizardTree(new WizardTree()));
 		}
 
 		@Test
-		public void whenGetItem_thenReturnFragmentOfPage() throws Exception {
-			assertEquals(requiredPage.getFragment(), wizardPagerAdapter.getItem(0));
+		public void whenSetNullWizardTree_thenDoNothing() throws Exception {
+			wizardPagerAdapter.setWizardTree(null);
 		}
 
 		@Test
-		public void whenGetItemPosition_thenReturnPositionNone() throws Exception {
-			assertEquals(WizardPagerAdapter.POSITION_NONE,
-					wizardPagerAdapter.getItemPosition(requiredPage.getFragment()));
+		public void whenGetCount_thenReturnZero() throws Exception {
+			assertEquals(0, wizardPagerAdapter.getCount());
 		}
 
-		public class GivenCompletedRequiredPage {
+		public class GivenAWizardTree {
+			private WizardTree wizardTree;
+
 			@Before
 			public void setUp() throws Exception {
-				requiredPage.setCompleted();
+				wizardTree = new WizardTree();
+				wizardPagerAdapter.setWizardTree(wizardTree);
 			}
 
-			@Test
-			public void whenCallIsPageValid_thenReturnTrue() throws Exception {
-				assertTrue(wizardPagerAdapter.isPageValid(0));
-			}
-		}
-	}
+			public class GivenOneRequiredPage {
+				private Page requiredPage;
 
-	public class GivenWizardPagerWithAPageAndABranchPage {
-		private Page pageInTrunkBranch;
-		private BranchPage branchPageInTrunkBranch;
-		private WizardPagerAdapter wizardPagerAdapter;
-
-		@Before
-		public void setUp() throws Exception {
-			pageInTrunkBranch = new TestPage("Page in Trunk Branch");
-			branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
-					.addBranch("First Branch", new TestPage("Page in first Branch"))
-					.addBranch("Second Branch", new TestPage("Page in second Branch"));
-			WizardTree wizardTree = new WizardTree(pageInTrunkBranch, branchPageInTrunkBranch);
-			wizardPagerAdapter = new WizardPagerAdapter(null, wizardTree) {
-				@Override
-				public void notifyDataSetChanged() {
+				@Before
+				public void setUp() throws Exception {
+					requiredPage = new TestPage("Page", true);
+					wizardTree.setPages(requiredPage);
 				}
-			};
-		}
 
-		@Test
-		public void whenGetCount_thenReturnTwo() throws Exception {
-			assertEquals(2, wizardPagerAdapter.getCount());
-		}
+				@Test
+				public void whenGetCount_thenReturnNumberOfPages() throws Exception {
+					assertEquals(1, wizardPagerAdapter.getCount());
+				}
 
-		public class GivenASelectedBranch {
-			@Before
-			public void setUp() throws Exception {
-				branchPageInTrunkBranch.selectBranch(0);
+				@Test
+				public void whenGetItem_thenReturnFragmentOfPage() throws Exception {
+					assertEquals(requiredPage.getFragment(), wizardPagerAdapter.getItem(0));
+				}
+
+				@Test
+				public void whenGetItemPosition_thenReturnPositionNone() throws Exception {
+					assertEquals(WizardPagerAdapter.POSITION_NONE,
+							wizardPagerAdapter.getItemPosition(requiredPage.getFragment()));
+				}
+
+				public class GivenCompletedRequiredPage {
+					@Before
+					public void setUp() throws Exception {
+						requiredPage.setCompleted();
+					}
+
+					@Test
+					public void whenCallIsPageValid_thenReturnTrue() throws Exception {
+						assertTrue(wizardPagerAdapter.isPageValid(0));
+					}
+				}
 			}
 
-			@Test
-			public void whenGetItemPositionAfterBranchPageFinished_thenReturnPositionNone() throws Exception {
-				assertEquals(WizardPagerAdapter.POSITION_UNCHANGED,
-						wizardPagerAdapter.getItemPosition(pageInTrunkBranch.getFragment()));
-				assertEquals(WizardPagerAdapter.POSITION_UNCHANGED,
-						wizardPagerAdapter.getItemPosition(branchPageInTrunkBranch.getFragment()));
-			}
+			public class GivenAPageAndABranchPage {
+				private Page pageInTrunkBranch;
+				private BranchPage branchPageInTrunkBranch;
 
-			@Test
-			public void whenGetCount_thenReturn() throws Exception {
-				assertEquals(3, wizardPagerAdapter.getCount());
+				@Before
+				public void setUp() throws Exception {
+					pageInTrunkBranch = new TestPage("Page in Trunk Branch");
+					branchPageInTrunkBranch = new TestBranchPage("Branch Page in Trunk Branch")
+							.addBranch("First Branch", new TestPage("Page in first Branch"))
+							.addBranch("Second Branch", new TestPage("Page in second Branch"));
+					wizardTree.setPages(pageInTrunkBranch, branchPageInTrunkBranch);
+				}
+
+				@Test
+				public void whenGetCount_thenReturnTwo() throws Exception {
+					assertEquals(2, wizardPagerAdapter.getCount());
+				}
+
+				public class GivenASelectedBranch {
+					@Before
+					public void setUp() throws Exception {
+						branchPageInTrunkBranch.selectBranch(0);
+					}
+
+					@Test
+					public void whenGetItemPositionAfterBranchPageFinished_thenReturnPositionNone() throws Exception {
+						assertEquals(WizardPagerAdapter.POSITION_UNCHANGED,
+								wizardPagerAdapter.getItemPosition(pageInTrunkBranch.getFragment()));
+						assertEquals(WizardPagerAdapter.POSITION_UNCHANGED,
+								wizardPagerAdapter.getItemPosition(branchPageInTrunkBranch.getFragment()));
+					}
+
+					@Test
+					public void whenGetCount_thenReturn() throws Exception {
+						assertEquals(3, wizardPagerAdapter.getCount());
+					}
+				}
 			}
 		}
 	}

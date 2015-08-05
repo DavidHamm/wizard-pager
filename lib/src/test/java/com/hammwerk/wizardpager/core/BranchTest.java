@@ -11,45 +11,23 @@ import static junit.framework.Assert.assertNull;
 
 @RunWith(HierarchicalContextRunner.class)
 public class BranchTest {
-	private BranchPage branchPage;
-	private Page firstPage;
-	private Page secondPage;
-
 	@Before
 	public void setUp() throws Exception {
-		firstPage = new TestPage("Title");
-		secondPage = new TestPage("Title");
-		branchPage = new TestBranchPage("Title")
-				.addBranch("First Branch", firstPage)
-				.addBranch("Second Branch", secondPage);
 	}
 
 	@Test
 	public void createBranch() throws Exception {
-		new Branch(firstPage);
+		Branch branch = new Branch();
+		assertNull(branch.getName());
 	}
 
 	@Test
 	public void createBranchWithName() throws Exception {
-		new Branch("Name", firstPage);
+		Branch branch = new Branch("Name");
+		assertEquals("Name", branch.getName());
 	}
 
-	@Test
-	public void createEmptyBranch() throws Exception {
-		new Branch();
-	}
-
-	@Test
-	public void createEmptyBranchWithName() throws Exception {
-		new Branch("Name");
-	}
-
-	@Test(expected = Branch.PageAfterBranchPageException.class)
-	public void createBranchWithPageAfterBranchPage_shouldThrowPageAfterBranchPageException() throws Exception {
-		new Branch(branchPage, firstPage);
-	}
-
-	public class GivenEmptyBranch {
+	public class GivenABranch {
 		private Branch branch;
 
 		@Before
@@ -58,27 +36,23 @@ public class BranchTest {
 		}
 
 		@Test
-		public void whenGetBranchPage_thenReturnNull() throws Exception {
-			assertNull(branch.getBranchPage());
+		public void whenSetPages_thenReturnBranch() throws Exception {
+			assertEquals(branch, branch.setPages());
+		}
+
+		@Test(expected = Branch.PageAfterBranchPageException.class)
+		public void whenSetPagesWithPageAfterBranchPage_thenThrowPageAfterBranchPageException() throws Exception {
+			branch.setPages(new TestBranchPage("Branch Page"), new TestPage("Page"));
+		}
+
+		@Test(expected = PageIndexOutOfBoundsException.class)
+		public void whenGetPage_thenThrowPageIndexOutOfBoundsException() throws Exception {
+			branch.getPage(0);
 		}
 
 		@Test
-		public void whenGetNumberOfValidPages_thenReturnZero() throws Exception {
-			assertEquals(0, branch.getNumberOfValidPages());
-		}
-	}
-
-	public class GivenBranchWithTowPages {
-		private Branch branch;
-
-		@Before
-		public void setUp() throws Exception {
-			branch = new Branch(firstPage, secondPage);
-		}
-
-		@Test
-		public void whenGetFirstPage_thenReturnFirstPage() throws Exception {
-			assertEquals(firstPage, branch.getPage(0));
+		public void whenGetNumberOfPages_thenReturnZero() throws Exception {
+			assertEquals(0, branch.getNumberOfPages());
 		}
 
 		@Test
@@ -87,97 +61,134 @@ public class BranchTest {
 		}
 
 		@Test
-		public void whenGetNumberOfValidPages_thenReturnTwo() throws Exception {
-			assertEquals(2, branch.getNumberOfValidPages());
-		}
-	}
-
-	public class GivenBranchWithTwoPagesAndBranchPage {
-		private Branch branch;
-
-		@Before
-		public void setUp() throws Exception {
-			branch = new Branch(firstPage, secondPage, branchPage);
-		}
-
-		@Test
-		public void whenGetNumberOfPages_thenReturnNumberOfPages() throws Exception {
-			assertEquals(3, branch.getNumberOfPages());
-		}
-
-		@Test
-		public void whenGetBranchPage_thenReturnBranchPage() throws Exception {
-			assertEquals(branchPage, branch.getBranchPage());
-		}
-	}
-
-	public class GivenBranchWithOneRequiredPage {
-		private Branch branch;
-		private Page requiredPage;
-
-		@Before
-		public void setUp() throws Exception {
-			requiredPage = new TestPage("Required Page", true);
-			branch = new Branch(requiredPage);
-		}
-
-		@Test
 		public void whenGetNumberOfValidPages_thenReturnZero() throws Exception {
 			assertEquals(0, branch.getNumberOfValidPages());
 		}
 
-		public class GivenCompletedRequiredPage {
+		public class GivenTowPages {
+			private Page pageInFirstBranch;
+			private Page pageInSecondBranch;
+
 			@Before
 			public void setUp() throws Exception {
-				requiredPage.setCompleted();
+				pageInFirstBranch = new TestPage("Page in first Branch");
+				pageInSecondBranch = new TestPage("Page in second Branch");
+				branch.setPages(pageInFirstBranch, pageInSecondBranch);
 			}
 
 			@Test
-			public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
-				assertEquals(1, branch.getNumberOfValidPages());
+			public void whenGetFirstPage_thenReturnFirstPage() throws Exception {
+				assertEquals(pageInFirstBranch, branch.getPage(0));
 			}
-		}
-	}
 
-	public class GivenBranchWithTwoRequiredPages {
-		private Branch branch;
-		private Page firstRequiredPage;
-		private Page secondRequiredPage;
-
-		@Before
-		public void setUp() throws Exception {
-			firstRequiredPage = new TestPage("First required Page", true);
-			secondRequiredPage = new TestPage("Second required Page", true);
-			branch = new Branch(firstRequiredPage, secondRequiredPage);
-		}
-
-		@Test
-		public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
-			assertEquals(0, branch.getNumberOfValidPages());
-		}
-
-		public class GivenCompletedFirstRequiredPage {
-			@Before
-			public void setUp() throws Exception {
-				firstRequiredPage.setCompleted();
+			@Test(expected = PageIndexOutOfBoundsException.class)
+			public void whenGetPageAfterLastPage_thenThrowPageIndexOutOfBoundsException() throws Exception {
+				branch.getPage(2);
 			}
 
 			@Test
-			public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
-				assertEquals(1, branch.getNumberOfValidPages());
-			}
-		}
-
-		public class GivenCompletedAllRequiredPage {
-			@Before
-			public void setUp() throws Exception {
-				firstRequiredPage.setCompleted();
-				secondRequiredPage.setCompleted();
+			public void whenGetBranchPage_thenReturnNull() throws Exception {
+				assertNull(branch.getBranchPage());
 			}
 
 			@Test
-			public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
+			public void whenGetNumberOfValidPages_thenReturnTwo() throws Exception {
 				assertEquals(2, branch.getNumberOfValidPages());
+			}
+		}
+
+		public class GivenTwoPagesAndBranchPage {
+			private BranchPage branchPage;
+			private Page pageInFirstBranch;
+			private Page pageInSecondBranch;
+
+			@Before
+			public void setUp() throws Exception {
+				pageInFirstBranch = new TestPage("Page in first Branch");
+				pageInSecondBranch = new TestPage("Page in second Branch");
+				branchPage = new TestBranchPage("Title")
+						.addBranch("First Branch", pageInFirstBranch)
+						.addBranch("Second Branch", pageInSecondBranch);
+				branch.setPages(pageInFirstBranch, pageInSecondBranch, branchPage);
+			}
+
+			@Test
+			public void whenGetNumberOfPages_thenReturnNumberOfPages() throws Exception {
+				assertEquals(3, branch.getNumberOfPages());
+			}
+
+			@Test
+			public void whenGetBranchPage_thenReturnBranchPage() throws Exception {
+				assertEquals(branchPage, branch.getBranchPage());
+			}
+		}
+
+		public class GivenARequiredPage {
+			private Page requiredPage;
+
+			@Before
+			public void setUp() throws Exception {
+				requiredPage = new TestPage("Required Page", true);
+				branch.setPages(requiredPage);
+			}
+
+			@Test
+			public void whenGetNumberOfValidPages_thenReturnZero() throws Exception {
+				assertEquals(0, branch.getNumberOfValidPages());
+			}
+
+			public class GivenCompletedRequiredPage {
+				@Before
+				public void setUp() throws Exception {
+					requiredPage.setCompleted();
+				}
+
+				@Test
+				public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
+					assertEquals(1, branch.getNumberOfValidPages());
+				}
+			}
+		}
+
+		public class GivenTwoRequiredPages {
+			private Page firstRequiredPage;
+			private Page secondRequiredPage;
+
+			@Before
+			public void setUp() throws Exception {
+				firstRequiredPage = new TestPage("First required Page", true);
+				secondRequiredPage = new TestPage("Second required Page", true);
+				branch.setPages(firstRequiredPage, secondRequiredPage);
+			}
+
+			@Test
+			public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
+				assertEquals(0, branch.getNumberOfValidPages());
+			}
+
+			public class GivenCompletedFirstRequiredPage {
+				@Before
+				public void setUp() throws Exception {
+					firstRequiredPage.setCompleted();
+				}
+
+				@Test
+				public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
+					assertEquals(1, branch.getNumberOfValidPages());
+				}
+			}
+
+			public class GivenCompletedAllRequiredPage {
+				@Before
+				public void setUp() throws Exception {
+					firstRequiredPage.setCompleted();
+					secondRequiredPage.setCompleted();
+				}
+
+				@Test
+				public void whenGetNumberOfValidPages_thenReturnOne() throws Exception {
+					assertEquals(2, branch.getNumberOfValidPages());
+				}
 			}
 		}
 	}

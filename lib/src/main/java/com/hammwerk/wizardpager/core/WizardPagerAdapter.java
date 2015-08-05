@@ -5,22 +5,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class WizardPagerAdapter extends FragmentStatePagerAdapter {
-	private final WizardTree wizardTree;
+	private WizardTree wizardTree;
 	private int lastChangedPageIndex;
 
-	public WizardPagerAdapter(FragmentManager fm, WizardTree wizardTree) {
+	public WizardPagerAdapter(FragmentManager fm) {
 		super(fm);
-		if (wizardTree == null) {
-			throw new WizardTreeIsNullException();
-		}
+	}
+
+	public WizardPagerAdapter setWizardTree(WizardTree wizardTree) {
 		this.wizardTree = wizardTree;
-		this.wizardTree.setWizardTreeListener(new WizardTreeListener() {
-			@Override
-			public void onTreeChanged(int pageIndex) {
-				lastChangedPageIndex = pageIndex;
-				notifyDataSetChanged();
-			}
-		});
+		if (wizardTree != null) {
+			this.wizardTree.setWizardTreeListener(new MyWizardTreeListener());
+		}
+		return this;
 	}
 
 	@Override
@@ -40,13 +37,18 @@ public class WizardPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public int getCount() {
-		return wizardTree.getNumberOfAccessablePages();
+		return wizardTree != null ? wizardTree.getNumberOfAccessablePages() : 0;
 	}
 
 	public boolean isPageValid(int position) {
 		return wizardTree.getPage(position).isValid();
 	}
 
-	public static class WizardTreeIsNullException extends RuntimeException {
+	private class MyWizardTreeListener implements WizardTreeListener {
+		@Override
+		public void onTreeChanged(int pageIndex) {
+			lastChangedPageIndex = pageIndex;
+			notifyDataSetChanged();
+		}
 	}
 }
