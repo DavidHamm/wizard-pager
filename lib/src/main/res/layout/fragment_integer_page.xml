@@ -13,7 +13,7 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
 		android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-		android:paddingRight="?android:attr/listPreferredItemPaddingLeft"
+		android:paddingRight="?android:attr/listPreferredItemPaddingRight"
 		tools:text="Title"/>
 
 	<EditText
@@ -47,5 +47,4 @@
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="unit"/>
-
 </RelativeLayout>

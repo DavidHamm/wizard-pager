@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center_horizontal"
+	android:orientation="horizontal"
+	tools:context="com.hammwerk.wizardpager.SingleFixedChoiceBranchPageFragment">
+
+	<LinearLayout
+		android:layout_width="500dp"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@android:id/title"
+			style="?attr/pageTitleStyle"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="16dp"
+			android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+			android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+			tools:text="Title"/>
+
+		<ListView
+			android:id="@android:id/list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:choiceMode="singleChoice"
+			android:paddingLeft="16dp"
+			android:paddingRight="16dp"
+			android:saveEnabled="false"
+			android:scrollbarStyle="outsideOverlay"
+			tools:listitem="@android:layout/simple_list_item_single_choice"/>
+	</LinearLayout>
+</LinearLayout>
