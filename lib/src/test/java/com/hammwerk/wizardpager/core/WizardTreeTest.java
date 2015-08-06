@@ -94,7 +94,7 @@ public class WizardTreeTest {
 				assertFalse(wizardTree.isLastPage(new TestPage("Invalid Page")));
 			}
 
-			public class GivenAPageValidityListener {
+			public class GivenAWizardTreeChangeListener {
 				private WizardTreeChangeListener wizardTreeChangeListener;
 
 				@Before
@@ -281,7 +281,7 @@ public class WizardTreeTest {
 			}
 		}
 
-		public class GivenAWizardTreeWithTrunkAndTwoBranchesAndTwoBranches {
+		public class GivenATrunkAndTwoBranchesAndTwoBranches {
 			private BranchPage branchPageInTrunkBranch;
 			private Page pageInFirstBranch;
 			private BranchPage branchPageInFirstBranch;
@@ -417,13 +417,37 @@ public class WizardTreeTest {
 				@Test
 				public void whenPageCompleted_thenCallOnPageValidCallback() throws Exception {
 					requiredPage.setCompleted();
+					verify(wizardTreeChangeListener, times(1)).onTreeChanged(1);
 					verify(wizardTreeChangeListener, times(1)).onPageValid(requiredPage, 0);
 				}
 
 				@Test
 				public void whenPageNotCompleted_thenCallOnPageInvalidCallback() throws Exception {
 					requiredPage.setNotCompleted();
+					verify(wizardTreeChangeListener, times(1)).onTreeChanged(1);
 					verify(wizardTreeChangeListener, times(1)).onPageInvalid(requiredPage, 0);
+				}
+			}
+
+			public class GivenAWizardTreeListener {
+				private WizardTreeListener wizardTreeListener;
+
+				@Before
+				public void setUp() throws Exception {
+					wizardTreeListener = mock(WizardTreeListener.class);
+					wizardTree.setWizardTreeListener(wizardTreeListener);
+				}
+
+				@Test
+				public void whenPageCompleted_thenCallOnTreeChangedCallback() throws Exception {
+					requiredPage.setCompleted();
+					verify(wizardTreeListener, times(1)).onTreeChanged(1);
+				}
+
+				@Test
+				public void whenPageNotCompleted_thenCallOnTreeChangedCallback() throws Exception {
+					requiredPage.setNotCompleted();
+					verify(wizardTreeListener, times(1)).onTreeChanged(1);
 				}
 			}
 		}
