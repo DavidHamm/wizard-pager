@@ -146,7 +146,11 @@ public class WizardTree {
 
 		@Override
 		public void onPageInvalid(Page page) {
+			if (wizardTreeListener != null) {
+				wizardTreeListener.onTreeChanged(getPositionOfPage(page) + 1);
+			}
 			if (wizardTreeChangeListener != null) {
+				wizardTreeChangeListener.onTreeChanged(getPositionOfPage(page) + 1);
 				wizardTreeChangeListener.onPageInvalid(page, getPositionOfPage(page));
 			}
 		}
