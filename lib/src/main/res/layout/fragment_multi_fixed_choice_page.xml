@@ -14,7 +14,7 @@
 		android:layout_height="wrap_content"
 		android:layout_margin="16dp"
 		android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-		android:paddingRight="?android:attr/listPreferredItemPaddingLeft"
+		android:paddingRight="?android:attr/listPreferredItemPaddingRight"
 		tools:text="Title"/>
 
 	<ListView
@@ -27,5 +27,4 @@
 		android:saveEnabled="false"
 		android:scrollbarStyle="outsideOverlay"
 		tools:listitem="@android:layout/simple_list_item_multiple_choice"/>
-
 </LinearLayout>
