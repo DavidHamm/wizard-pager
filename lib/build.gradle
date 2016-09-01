@@ -1,15 +1,17 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 android {
-	compileSdkVersion 22
-	buildToolsVersion "22.0.1"
+	compileSdkVersion 24
+	buildToolsVersion "24.0.2"
 
 	defaultConfig {
-		minSdkVersion 15
-		targetSdkVersion 22
+		minSdkVersion 16
+		targetSdkVersion 24
 		versionCode 1
-		versionName "1.2.1"
+		versionName "1.3.0"
 	}
 	buildTypes {
 		release {
@@ -17,15 +19,38 @@ android {
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 		}
 	}
+	sourceSets {
+		main.java.srcDirs += 'src/main/kotlin'
+		test.java.srcDirs += 'src/test/kotlin'
+	}
 }
 
 dependencies {
-	compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile 'com.android.support:appcompat-v7:22.2.1'
+	compile 'com.android.support:appcompat-v7:24.2.0'
+	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+	compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-	testCompile 'junit:junit:4.12'
 	testCompile 'de.bechte.junit:junit-hierarchicalcontextrunner:4.12.0'
+	testCompile 'junit:junit:4.12'
 	testCompile 'org.mockito:mockito-core:1.9.5'
+}
+
+bintray {
+	user = project.user
+	key = project.key
+	publications = ['mavenLibAndSource']
+	publish = true
+	pkg {
+		repo = 'maven'
+		name = 'wizard-pager'
+		userOrg = 'davidhamm'
+		licenses = ['MIT']
+		vcsUrl = 'https://github.com/DavidHamm/wizard-pager'
+		version {
+			name = "v${android.defaultConfig.versionName}"
+			vcsTag = "v${android.defaultConfig.versionName}"
+		}
+	}
 }
 
 task sourceJar(type: Jar) {
@@ -34,7 +59,7 @@ task sourceJar(type: Jar) {
 
 publishing {
 	publications {
-		libAndSource(MavenPublication) {
+		mavenLibAndSource(MavenPublication) {
 			groupId 'com.hammwerk'
 			artifactId 'wizardpager'
 			version android.defaultConfig.versionName
